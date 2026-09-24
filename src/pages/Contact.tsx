@@ -1,6 +1,8 @@
 import { Clock, MapPin, Phone } from "lucide-react";
 import EnquiryForm from "../components/EnquiryForm";
 import { WhatsAppIcon } from "../components/Icons";
+import MapEmbed from "../components/MapEmbed";
+import { usePageMeta } from "../lib/usePageMeta";
 import { telLink, whatsappLink } from "../lib/format";
 import { useSettings } from "../lib/settings";
 import { useCatalogue } from "../lib/useCatalogue";
@@ -8,6 +10,7 @@ import { useCatalogue } from "../lib/useCatalogue";
 export default function Contact() {
   const { business } = useSettings();
   const { products } = useCatalogue();
+  usePageMeta("Contact us", `WhatsApp or call ${business.phone}, or visit us at ${business.address}.`);
   return (
     <div className="container-x py-12">
       <h1 className="text-4xl sm:text-5xl">Get in touch</h1>
@@ -30,8 +33,7 @@ export default function Contact() {
             <span className="flex h-12 w-12 items-center justify-center rounded-full bg-farm-900 text-sun-400"><Clock /></span>
             <div><p className="font-semibold">Hours</p><p className="text-sm text-farm-950/70">{business.hours}</p></div>
           </div>
-          <iframe title="Map" className="h-64 w-full rounded-2xl border-0" loading="lazy" referrerPolicy="no-referrer"
-            src={`https://maps.google.com/maps?q=${encodeURIComponent(business.map_query)}&z=12&output=embed`} />
+          <MapEmbed query={business.map_query} />
         </div>
         <EnquiryForm products={products} />
       </div>

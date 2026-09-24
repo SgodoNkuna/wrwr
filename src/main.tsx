@@ -4,6 +4,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./index.css";
 import { AuthProvider } from "./lib/auth";
 import { SettingsProvider } from "./lib/settings";
+import { ConsentProvider } from "./lib/consent";
+import { CookiePolicy, PaiaNotice, PrivacyPolicy, TermsOfUse } from "./pages/Legal";
 import SiteLayout from "./components/SiteLayout";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -25,6 +27,7 @@ import ResetPassword from "./admin/ResetPassword";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
+      <ConsentProvider>
       <SettingsProvider>
         <AuthProvider>
           <Routes>
@@ -34,6 +37,10 @@ createRoot(document.getElementById("root")!).render(
               <Route path="products/:slug" element={<ProductDetail />} />
               <Route path="about" element={<About />} />
               <Route path="contact" element={<Contact />} />
+              <Route path="privacy" element={<PrivacyPolicy />} />
+              <Route path="terms" element={<TermsOfUse />} />
+              <Route path="cookies" element={<CookiePolicy />} />
+              <Route path="paia" element={<PaiaNotice />} />
               <Route path="*" element={<NotFound />} />
             </Route>
             <Route path="admin/reset" element={<ResetPassword />} />
@@ -50,6 +57,7 @@ createRoot(document.getElementById("root")!).render(
           </Routes>
         </AuthProvider>
       </SettingsProvider>
+      </ConsentProvider>
     </BrowserRouter>
   </StrictMode>,
 );

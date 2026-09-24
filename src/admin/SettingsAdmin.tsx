@@ -9,6 +9,8 @@ const bizFields: [keyof BusinessSettings, string][] = [
   ["name", "Business name"], ["tagline", "Tagline"], ["phone", "Phone"], ["alt_phone", "Alternative phone"],
   ["whatsapp", "WhatsApp number (e.g. 27688289347)"], ["email", "Email"], ["address", "Address"],
   ["hours", "Opening hours"], ["map_query", "Map search (Google Maps)"],
+  ["legal_name", "Registered business name (legal pages)"], ["registration_number", "Company / CIPC registration number"],
+  ["information_officer", "POPIA Information Officer (name)"],
 ];
 const homeFields: [keyof HomeSettings, string][] = [
   ["hero_title", "Homepage headline"], ["hero_subtitle", "Homepage sub-heading"], ["announcement", "Top announcement bar (leave empty to hide)"],

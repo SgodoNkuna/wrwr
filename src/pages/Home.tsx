@@ -5,6 +5,7 @@ import { WhatsAppIcon } from "../components/Icons";
 import { formatRand, whatsappLink } from "../lib/format";
 import { useSettings } from "../lib/settings";
 import { useCatalogue } from "../lib/useCatalogue";
+import { usePageMeta } from "../lib/usePageMeta";
 
 const catIcon: Record<string, typeof Bird> = { poultry: Bird, livestock: Beef, "fresh-produce": Carrot };
 
@@ -13,6 +14,7 @@ export default function Home() {
   const { categories, products, loading } = useCatalogue();
   const featured = products.filter((p) => p.featured).slice(0, 6);
   const flagship = products.find((p) => p.slug === "broiler-chicks");
+  usePageMeta("Tshehla AgriHub | Livestock, Poultry & Fresh Produce in Letsitele", home.hero_subtitle, { image: "/images/tau-poultry-broilers.jpg" });
 
   return (
     <>

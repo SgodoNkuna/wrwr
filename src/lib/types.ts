@@ -47,6 +47,7 @@ export interface Enquiry {
   quantity: string | null;
   status: "new" | "contacted" | "closed";
   admin_notes: string | null;
+  consent_at: string | null;
   created_at: string;
   products?: Pick<Product, "name"> | null;
 }
@@ -61,6 +62,9 @@ export interface BusinessSettings {
   address: string;
   hours: string;
   map_query: string;
+  legal_name: string;
+  registration_number: string;
+  information_officer: string;
 }
 
 export interface HomeSettings {

@@ -3,12 +3,14 @@ import { useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import { useCatalogue } from "../lib/useCatalogue";
+import { usePageMeta } from "../lib/usePageMeta";
 
 export default function Products() {
   const { categories, products, loading, error } = useCatalogue();
   const [params, setParams] = useSearchParams();
   const [q, setQ] = useState("");
   const active = params.get("category") ?? "all";
+  usePageMeta("Products", "Cattle, goats, pigs, broiler chicks, Brahma chickens, turkeys, geese, ducks, ostriches, green peppers and green beans from Letsitele, Limpopo.");
 
   const list = useMemo(() => products.filter((p) =>
     (active === "all" || p.categories?.slug === active) &&

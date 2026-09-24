@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import type { Service } from "../lib/types";
 import { useSettings } from "../lib/settings";
+import { usePageMeta } from "../lib/usePageMeta";
 
 export default function About() {
   const { business } = useSettings();
   const [services, setServices] = useState<Service[]>([]);
+  usePageMeta("About us", `${business.name} is a family farm on Gunyula Farm, Letsitele, raising livestock and poultry and growing fresh produce.`);
   useEffect(() => {
     supabase.from("services").select("*").eq("published", true).order("sort_order").then(({ data }) => setServices(data ?? []));
   }, []);

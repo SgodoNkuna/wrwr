@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { CheckCircle2 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import type { Product } from "../lib/types";
@@ -21,10 +22,11 @@ export default function EnquiryForm({ products, defaultProductId }: { products?:
       quantity: String(f.get("quantity") || "").trim() || null,
       message: String(f.get("message")).trim(),
       product_id: (f.get("product_id") as string) || defaultProductId || null,
+      consent: f.get("consent") === "on",
     });
     if (error) {
       setState("idle");
-      setError(error.message.includes("Too many") || error.message.includes("lot of enquiries")
+      setError(error.message.includes("Too many") || error.message.includes("lot of enquiries") || error.message.includes("Consent")
         ? error.message
         : "Please check your details (a valid phone number is required) and try again.");
       return;
@@ -61,6 +63,10 @@ export default function EnquiryForm({ products, defaultProductId }: { products?:
         </div>
       )}
       <div><label className="label" htmlFor="eq-msg">Message *</label><textarea id="eq-msg" name="message" required minLength={2} maxLength={2000} rows={4} className="input" /></div>
+      <label className="flex items-start gap-2 text-xs text-farm-950/70">
+        <input type="checkbox" name="consent" required className="mt-0.5 h-4 w-4 shrink-0 accent-farm-700" />
+        <span>I agree that Tshehla AgriHub may use my details to respond to this enquiry, as described in the <Link to="/privacy" className="font-semibold text-farm-700 underline">Privacy Policy</Link>. *</span>
+      </label>
       {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{error}</p>}
       <button type="submit" disabled={state === "sending"} className="btn-primary w-full">{state === "sending" ? "Sending…" : "Send enquiry"}</button>
     </form>

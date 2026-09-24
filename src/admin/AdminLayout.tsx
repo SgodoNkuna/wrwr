@@ -2,6 +2,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import { ClipboardList, FolderTree, Home, Inbox, LogOut, Package, Settings, ShieldCheck, Users, Wrench } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import Login from "./Login";
+import { usePageMeta } from "../lib/usePageMeta";
 
 const links = [
   { to: "/admin", label: "Dashboard", icon: Home, end: true },
@@ -16,6 +17,7 @@ const links = [
 
 export default function AdminLayout() {
   const { session, loading, isStaff, isAdmin, roles, signOut } = useAuth();
+  usePageMeta("Admin", "Staff area", { noindex: true });
 
   if (loading) return <div className="flex min-h-screen items-center justify-center text-farm-950/60">Loading…</div>;
   if (!session) return <Login />;

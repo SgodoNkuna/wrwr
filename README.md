@@ -27,6 +27,15 @@ See [`docs/PROJECT_BRIEF.md`](docs/PROJECT_BRIEF.md) for the client brief.
 
 The Supabase security advisor reports **0 issues**.
 
+## Compliance (South Africa)
+- **POPIA:** `/privacy` policy, a required consent tick-box on enquiries (the consent timestamp is set by the server), and automatic deletion of enquiries after 24 months (`pg_cron`).
+- **Cookies:** consent banner. Google Maps loads only after consent. There are no analytics or marketing cookies. See `/cookies`.
+- **Terms of Use** with ECT Act s43 business details (`/terms`), and a **PAIA** notice (`/paia`).
+- **SEO:** per-page titles and descriptions, canonical URLs, Open Graph tags, LocalBusiness and Product JSON-LD, `sitemap.xml` and `robots.txt`.
+
+## Testing
+See [`docs/TESTING_GUIDE.md`](docs/TESTING_GUIDE.md) for the test accounts, dummy data and a click-through script. `npm test` runs the unit tests, and CI runs tests plus build on every PR.
+
 ## Run locally
 ```bash
 cp .env.example .env    # fill in the Supabase URL + publishable key

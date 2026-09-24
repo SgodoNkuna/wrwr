@@ -8,6 +8,7 @@ import { priceLabel, telLink, whatsappLink } from "../lib/format";
 import { useSettings } from "../lib/settings";
 import { supabase } from "../lib/supabase";
 import type { Product } from "../lib/types";
+import { usePageMeta } from "../lib/usePageMeta";
 
 export default function ProductDetail() {
   const { slug } = useParams();
@@ -18,9 +19,26 @@ export default function ProductDetail() {
     supabase.from("products").select("*, categories(slug, name)").eq("slug", slug ?? "").eq("published", true).maybeSingle()
       .then(({ data }) => {
         setProduct(data as Product | null);
-        if (data) document.title = `${data.name} | Tshehla AgriHub`;
       });
   }, [slug]);
+  usePageMeta(product?.name ?? "Product", product?.summary ?? "Farm produce from Tshehla AgriHub.", { image: product?.image_url ?? undefined, noindex: product === null });
+
+  useEffect(() => {
+    if (!product) return;
+    // Product structured data for search engines.
+    const el = document.createElement("script");
+    el.type = "application/ld+json";
+    el.text = JSON.stringify({
+      "@context": "https://schema.org", "@type": "Product", name: product.name, description: product.summary,
+      image: product.image_url ? new URL(product.image_url, window.location.origin).href : undefined,
+      brand: { "@type": "Brand", name: "Tshehla AgriHub" },
+      ...(product.show_price && product.price_cents != null ? { offers: {
+        "@type": "Offer", priceCurrency: "ZAR", price: (product.price_cents / 100).toFixed(2),
+        availability: product.in_stock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" } } : {}),
+    });
+    document.head.appendChild(el);
+    return () => el.remove();
+  }, [product]);
 
   if (product === undefined) return <div className="container-x py-20 text-farm-950/60">Loading…</div>;
   if (!product) return (

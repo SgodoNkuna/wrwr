@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
+import { usePageMeta } from "../lib/usePageMeta";
 export default function NotFound() {
+  usePageMeta("Page not found", "This page could not be found.", { noindex: true });
   return (
     <div className="container-x py-24 text-center">
       <h1 className="text-5xl">404</h1>

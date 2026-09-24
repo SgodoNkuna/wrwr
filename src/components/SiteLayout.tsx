@@ -4,6 +4,8 @@ import { Clock, MapPin, Menu, Phone, X } from "lucide-react";
 import { telLink, whatsappLink } from "../lib/format";
 import { useSettings } from "../lib/settings";
 import { WhatsAppIcon } from "./Icons";
+import CookieBanner from "./CookieBanner";
+import { useConsent } from "../lib/consent";
 
 const nav = [
   { to: "/", label: "Home" },
@@ -16,6 +18,7 @@ export default function SiteLayout() {
   const { business, home } = useSettings();
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
+  const { reopen } = useConsent();
   useEffect(() => { setOpen(false); window.scrollTo(0, 0); }, [pathname]);
 
   return (
@@ -65,12 +68,18 @@ export default function SiteLayout() {
             <p className="flex gap-2"><Phone className="h-4 w-4 shrink-0 text-sun-400" /><a href={telLink(business.phone)} className="hover:text-white">{business.phone}</a>{business.alt_phone && <> · <a href={telLink(business.alt_phone)} className="hover:text-white">{business.alt_phone}</a></>}</p>
             <p className="flex gap-2"><Clock className="h-4 w-4 shrink-0 text-sun-400" />{business.hours}</p>
           </div>
-          <div className="space-y-2 text-sm md:text-right">
+          <div className="grid grid-cols-2 gap-2 text-sm md:text-right">
             {nav.map((n) => <Link key={n.to} to={n.to} className="block hover:text-white">{n.label}</Link>)}
+            <Link to="/privacy" className="block hover:text-white">Privacy Policy</Link>
+            <Link to="/terms" className="block hover:text-white">Terms of Use</Link>
+            <Link to="/cookies" className="block hover:text-white">Cookie Policy</Link>
+            <Link to="/paia" className="block hover:text-white">PAIA Notice</Link>
           </div>
         </div>
         <div className="border-t border-white/10 py-4 text-center text-xs text-white/50">
-          © {new Date().getFullYear()} {business.name}. All rights reserved. · <Link to="/admin" className="hover:text-white">Staff login</Link>
+          © {new Date().getFullYear()} {business.legal_name || business.name}{business.registration_number && ` · Reg. no. ${business.registration_number}`}. All rights reserved.
+          {" · "}<button onClick={reopen} className="hover:text-white">Cookie settings</button>
+          {" · "}<Link to="/admin" className="hover:text-white">Staff login</Link>
         </div>
       </footer>
 
@@ -78,6 +87,7 @@ export default function SiteLayout() {
         className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl transition hover:scale-110">
         <WhatsAppIcon className="h-7 w-7" />
       </a>
+      <CookieBanner />
     </div>
   );
 }

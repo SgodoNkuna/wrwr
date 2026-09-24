@@ -1,7 +1,7 @@
 import type { BusinessSettings, Product } from "./types";
 
 export const formatRand = (cents: number) =>
-  "R" + (cents / 100).toLocaleString("en-ZA", { maximumFractionDigits: cents % 100 ? 2 : 0 });
+  "R" + (cents / 100).toLocaleString("en-ZA", { minimumFractionDigits: cents % 100 ? 2 : 0, maximumFractionDigits: 2 });
 
 export const priceLabel = (p: Pick<Product, "price_cents" | "show_price">) =>
   p.show_price && p.price_cents != null ? formatRand(p.price_cents) : "Enquire for price";
