@@ -1,18 +1,28 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { ClipboardList, FolderTree, Home, Inbox, LogOut, Package, Settings, ShieldCheck, Users, Wrench } from "lucide-react";
+import { ClipboardList, CreditCard, FolderTree, Home, Inbox, LogOut, Package, Receipt, Settings, ShieldCheck, UserRound, Users, Wrench } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import Login from "./Login";
 import { usePageMeta } from "../lib/usePageMeta";
 
-const links = [
-  { to: "/admin", label: "Dashboard", icon: Home, end: true },
-  { to: "/admin/enquiries", label: "Enquiries", icon: Inbox },
-  { to: "/admin/products", label: "Products", icon: Package },
-  { to: "/admin/categories", label: "Categories", icon: FolderTree },
-  { to: "/admin/services", label: "Services", icon: Wrench },
-  { to: "/admin/settings", label: "Site settings", icon: Settings, admin: true },
-  { to: "/admin/users", label: "Users & roles", icon: Users, admin: true },
-  { to: "/admin/audit", label: "Audit log", icon: ClipboardList, admin: true },
+const groups = [
+  { title: "", links: [{ to: "/admin", label: "Dashboard", icon: Home, end: true }] },
+  { title: "Sales", links: [
+    { to: "/admin/orders", label: "Orders", icon: Receipt },
+    { to: "/admin/enquiries", label: "Enquiries", icon: Inbox },
+    { to: "/admin/customers", label: "Customers", icon: UserRound },
+  ] },
+  { title: "Catalogue", links: [
+    { to: "/admin/products", label: "Products & stock", icon: Package },
+    { to: "/admin/categories", label: "Categories", icon: FolderTree },
+    { to: "/admin/services", label: "Services", icon: Wrench },
+  ] },
+  { title: "Settings", links: [
+    { to: "/admin/payments", label: "Payments", icon: CreditCard, admin: true },
+    { to: "/admin/settings", label: "Site settings", icon: Settings, admin: true },
+    { to: "/admin/users", label: "Users & roles", icon: Users, admin: true },
+    { to: "/admin/privacy", label: "Privacy requests", icon: ShieldCheck },
+    { to: "/admin/audit", label: "Audit log", icon: ClipboardList, admin: true },
+  ] },
 ];
 
 export default function AdminLayout() {
@@ -35,20 +45,25 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-farm-50 md:flex-row">
-      <aside className="bg-farm-950 text-white md:sticky md:top-0 md:h-screen md:w-60 md:shrink-0">
+    <div className="flex min-h-screen flex-col bg-[#f3f1ea] md:flex-row">
+      <aside className="bg-farm-950 text-paper md:sticky md:top-0 md:h-screen md:w-60 md:shrink-0 md:overflow-y-auto">
         <div className="flex items-center justify-between p-4 md:block">
-          <NavLink to="/" className="font-display text-lg">Tshehla <span className="text-sun-400">Admin</span></NavLink>
+          <NavLink to="/" className="font-display text-2xl uppercase">Tshehla <span className="text-yolk">Admin</span></NavLink>
           <p className="text-xs text-white/50 md:mt-1">{session.user.email} · {roles.join(", ")}</p>
         </div>
-        <nav className="flex gap-1 overflow-x-auto px-2 pb-2 md:flex-col md:overflow-visible">
-          {links.filter((l) => !l.admin || isAdmin).map((l) => (
-            <NavLink key={l.to} to={l.to} end={l.end}
-              className={({ isActive }) => `flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium ${isActive ? "bg-sun-500 text-white" : "text-white/75 hover:bg-white/10"}`}>
-              <l.icon className="h-4 w-4" />{l.label}
-            </NavLink>
+        <nav className="flex gap-1 overflow-x-auto px-2 pb-3 md:flex-col md:overflow-visible">
+          {groups.map((g) => (
+            <div key={g.title || "top"} className="flex gap-1 md:mt-3 md:flex-col">
+              {g.title && <p className="hidden px-3 pb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-paper/40 md:block">{g.title}</p>}
+              {g.links.filter((l) => !("admin" in l) || isAdmin).map((l) => (
+                <NavLink key={l.to} to={l.to} end={"end" in l}
+                  className={({ isActive }) => `flex shrink-0 items-center gap-2 rounded-tag px-3 py-2 text-sm font-bold ${isActive ? "bg-yolk text-ink" : "text-paper/75 hover:bg-white/10"}`}>
+                  <l.icon className="h-4 w-4" />{l.label}
+                </NavLink>
+              ))}
+            </div>
           ))}
-          <button onClick={signOut} className="flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm text-white/75 hover:bg-white/10 md:mt-4"><LogOut className="h-4 w-4" />Sign out</button>
+          <button onClick={signOut} className="flex shrink-0 items-center gap-2 rounded-tag px-3 py-2 text-sm text-paper/75 hover:bg-white/10 md:mt-4"><LogOut className="h-4 w-4" />Sign out</button>
         </nav>
       </aside>
       <main className="min-w-0 flex-1 p-4 md:p-8"><Outlet /></main>

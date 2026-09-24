@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
-export default function ResetPassword() {
+export default function ResetPassword({ next = "/admin" }: { next?: string }) {
   const nav = useNavigate();
   const [err, setErr] = useState<string | null>(null);
   const submit = async (e: FormEvent<HTMLFormElement>) => {
@@ -12,7 +12,7 @@ export default function ResetPassword() {
     if (pw !== String(f.get("confirm"))) return setErr("Passwords don't match.");
     const { error } = await supabase.auth.updateUser({ password: pw });
     if (error) return setErr(error.message);
-    nav("/admin");
+    nav(next);
   };
   return (
     <div className="flex min-h-screen items-center justify-center bg-farm-950 p-4">

@@ -6,3 +6,6 @@ update public.products set in_stock = true where slug = 'ostriches';
 update public.site_settings set value = value || '{"announcement":"Broiler chicks now available: box of 100 for R1 200."}' where key = 'home';
 -- Test accounts (the last admin cannot be removed, so create the real admin first):
 -- delete from auth.users where email in ('admin.test@example.com','editor.test@example.com','noaccess.test@example.com');
+delete from public.orders where is_test;
+update public.products set stock_qty = null;
+-- delete from auth.users where email = 'customer.test@example.com';

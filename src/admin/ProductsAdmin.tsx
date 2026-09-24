@@ -10,6 +10,7 @@ type Draft = Omit<Product, "id" | "categories"> & { id?: string };
 const empty: Draft = {
   category_id: null, slug: "", name: "", summary: "", description: "", image_url: "", unit: "",
   price_cents: null, show_price: false, in_stock: true, featured: false, published: true, highlights: [], sort_order: 0,
+  orderable: false, stock_qty: null, max_per_order: 20,
 };
 
 const MAX_BYTES = 5 * 1024 * 1024;
@@ -61,7 +62,7 @@ export default function ProductsAdmin() {
     e.preventDefault();
     if (!draft) return;
     setBusy(true); setError(null);
-    const { id, ...values } = draft;
+    const { id, updated_at: _u, ...values } = draft;
     const row = { ...values, slug: values.slug || slugify(values.name), image_url: values.image_url || null,
       highlights: values.highlights.map((h) => h.trim()).filter(Boolean) };
     const { error } = id ? await supabase.from("products").update(row).eq("id", id) : await supabase.from("products").insert(row);
@@ -77,7 +78,7 @@ export default function ProductsAdmin() {
       <div className="card overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-farm-50 text-left text-xs uppercase tracking-wide text-farm-950/60">
-            <tr><th className="p-3">Product</th><th className="p-3">Category</th><th className="p-3">Price</th><th className="p-3">Status</th><th className="p-3 text-right">Actions</th></tr>
+            <tr><th className="p-3">Product</th><th className="p-3">Category</th><th className="p-3">Price</th><th className="p-3">Stock</th><th className="p-3">Status</th><th className="p-3 text-right">Actions</th></tr>
           </thead>
           <tbody className="divide-y divide-farm-900/10">
             {items.map((p) => (
@@ -91,7 +92,17 @@ export default function ProductsAdmin() {
                 <td className="p-3">{p.categories?.name ?? "—"}</td>
                 <td className="p-3">{p.show_price && p.price_cents != null ? formatRand(p.price_cents) : <span className="text-farm-950/50">Enquire</span>}</td>
                 <td className="p-3">
+                  {p.stock_qty == null ? <span className="text-ink/40">not tracked</span> : (
+                    <div className="flex items-center gap-1">
+                      <button className="rounded-tag border border-ink/20 px-1.5 font-bold" aria-label={`One less ${p.name}`} onClick={() => patch(p.id, { stock_qty: Math.max(0, p.stock_qty! - 1), in_stock: p.stock_qty! - 1 > 0 })}>−</button>
+                      <span className={`w-8 text-center font-bold ${p.stock_qty === 0 ? "text-sun-600" : ""}`}>{p.stock_qty}</span>
+                      <button className="rounded-tag border border-ink/20 px-1.5 font-bold" aria-label={`One more ${p.name}`} onClick={() => patch(p.id, { stock_qty: p.stock_qty! + 1, in_stock: true })}>+</button>
+                    </div>
+                  )}
+                </td>
+                <td className="p-3">
                   <div className="flex flex-wrap gap-1">
+                    {p.orderable && <span className="rounded-full bg-yolk px-2 py-0.5 text-xs font-semibold">Online</span>}
                     {p.featured && <span className="rounded-full bg-sun-500 px-2 py-0.5 text-xs font-semibold text-white">Featured</span>}
                     {!p.in_stock && <span className="rounded-full bg-farm-950 px-2 py-0.5 text-xs font-semibold text-white">Sold out</span>}
                     {!p.published && <span className="rounded-full bg-farm-100 px-2 py-0.5 text-xs font-semibold">Hidden</span>}
@@ -126,6 +137,8 @@ export default function ProductsAdmin() {
               <div><label className="label">Unit</label><input maxLength={60} className="input" placeholder="e.g. Box of 100 chicks" value={draft.unit ?? ""} onChange={(e) => setDraft({ ...draft, unit: e.target.value })} /></div>
               <div><label className="label">Price (Rand)</label><input type="number" min={0} step="0.01" className="input" value={draft.price_cents != null ? draft.price_cents / 100 : ""} onChange={(e) => setDraft({ ...draft, price_cents: e.target.value === "" ? null : Math.round(Number(e.target.value) * 100) })} /></div>
               <div><label className="label">Sort order</label><input type="number" className="input" value={draft.sort_order} onChange={(e) => setDraft({ ...draft, sort_order: Number(e.target.value) })} /></div>
+              <div><label className="label">Stock on hand (blank = don't track)</label><input type="number" min={0} className="input" value={draft.stock_qty ?? ""} onChange={(e) => setDraft({ ...draft, stock_qty: e.target.value === "" ? null : Math.max(0, Math.floor(Number(e.target.value))) })} /></div>
+              <div><label className="label">Most per online order</label><input type="number" min={1} max={1000} className="input" value={draft.max_per_order} onChange={(e) => setDraft({ ...draft, max_per_order: Math.min(1000, Math.max(1, Math.floor(Number(e.target.value) || 1))) })} /></div>
             </div>
             <div><label className="label">Short summary</label><input maxLength={300} className="input" value={draft.summary ?? ""} onChange={(e) => setDraft({ ...draft, summary: e.target.value })} /></div>
             <div><label className="label">Description</label><textarea rows={5} maxLength={5000} className="input" value={draft.description ?? ""} onChange={(e) => setDraft({ ...draft, description: e.target.value })} /></div>
@@ -142,6 +155,7 @@ export default function ProductsAdmin() {
             </div>
             <div className="flex flex-wrap gap-5">
               <Toggle label="Show price publicly" checked={draft.show_price} onChange={(v) => setDraft({ ...draft, show_price: v })} />
+              <Toggle label="Can be ordered online (needs a shown price)" checked={draft.orderable} onChange={(v) => setDraft({ ...draft, orderable: v })} />
               <Toggle label="In stock" checked={draft.in_stock} onChange={(v) => setDraft({ ...draft, in_stock: v })} />
               <Toggle label="Featured" checked={draft.featured} onChange={(v) => setDraft({ ...draft, featured: v })} />
               <Toggle label="Published" checked={draft.published} onChange={(v) => setDraft({ ...draft, published: v })} />

@@ -1,59 +1,114 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { formatDate, formatRand, ORDER_STATUS_LABEL } from "../lib/format";
 import { supabase } from "../lib/supabase";
-import type { Enquiry } from "../lib/types";
+import type { Enquiry, Order, Product } from "../lib/types";
+import OrdersChart, { type DayCount } from "./OrdersChart";
 import { PageHeader } from "./ui";
 
+const sast = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: "Africa/Johannesburg" }); // YYYY-MM-DD
+
 export default function Dashboard() {
-  const [stats, setStats] = useState({ products: 0, hidden: 0, newEnq: 0, totalEnq: 0 });
-  const [recent, setRecent] = useState<Enquiry[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
+  const [lowStock, setLowStock] = useState<Product[]>([]);
+  const [openRequests, setOpenRequests] = useState(0);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     (async () => {
-      const count = (q: PromiseLike<{ count: number | null }>) => Promise.resolve(q).then((r) => r.count ?? 0);
-      const [products, hidden, newEnq, totalEnq, rec] = await Promise.all([
-        count(supabase.from("products").select("*", { count: "exact", head: true })),
-        count(supabase.from("products").select("*", { count: "exact", head: true }).eq("published", false)),
-        count(supabase.from("enquiries").select("*", { count: "exact", head: true }).eq("status", "new")),
-        count(supabase.from("enquiries").select("*", { count: "exact", head: true })),
-        supabase.from("enquiries").select("*, products(name)").order("created_at", { ascending: false }).limit(5),
+      const since = new Date(Date.now() - 45 * 864e5).toISOString();
+      const [o, e, p, r] = await Promise.all([
+        supabase.from("orders").select("*").gte("created_at", since).order("created_at", { ascending: false }),
+        supabase.from("enquiries").select("*, products(name)").eq("status", "new").order("created_at", { ascending: false }).limit(5),
+        supabase.from("products").select("*").not("stock_qty", "is", null).lte("stock_qty", 10).order("stock_qty"),
+        supabase.from("data_requests").select("id", { count: "exact", head: true }).in("status", ["open", "in_progress"]),
       ]);
-      setStats({ products, hidden, newEnq, totalEnq });
-      setRecent((rec.data as Enquiry[]) ?? []);
+      setOrders((o.data as Order[]) ?? []);
+      setEnquiries((e.data as Enquiry[]) ?? []);
+      setLowStock((p.data as Product[]) ?? []);
+      setOpenRequests(r.count ?? 0);
+      setLoaded(true);
     })();
   }, []);
 
+  const live = orders.filter((o) => o.status !== "cancelled");
+  const monthStart = sast(new Date()).slice(0, 7);
+  const paidThisMonth = live.filter((o) => o.payment_status === "paid" && sast(new Date(o.paid_at ?? o.created_at)).startsWith(monthStart));
+  const toHandle = live.filter((o) => o.status === "new" || o.status === "confirmed");
+  const awaitingPayment = live.filter((o) => o.payment_status !== "paid" && o.status !== "completed");
+
+  const days: DayCount[] = Array.from({ length: 14 }, (_, i) => {
+    const d = new Date(Date.now() - (13 - i) * 864e5);
+    const key = sast(d);
+    const todays = live.filter((o) => sast(new Date(o.created_at)) === key);
+    return { date: key, label: d.toLocaleDateString("en-ZA", { day: "numeric", month: "short", timeZone: "Africa/Johannesburg" }),
+      count: todays.length, revenue: todays.reduce((s, o) => s + o.total_cents, 0) };
+  });
+
   const tiles = [
-    { label: "New enquiries", value: stats.newEnq, to: "/admin/enquiries", hot: stats.newEnq > 0 },
-    { label: "Total enquiries", value: stats.totalEnq, to: "/admin/enquiries" },
-    { label: "Products", value: stats.products, to: "/admin/products" },
-    { label: "Hidden products", value: stats.hidden, to: "/admin/products" },
+    { label: "Orders to handle", value: String(toHandle.length), to: "/admin/orders", hot: toHandle.length > 0 },
+    { label: "Awaiting payment", value: formatRand(awaitingPayment.reduce((s, o) => s + o.total_cents, 0)), sub: `${awaitingPayment.length} orders`, to: "/admin/orders" },
+    { label: "Paid this month", value: formatRand(paidThisMonth.reduce((s, o) => s + o.total_cents, 0)), sub: `${paidThisMonth.length} orders`, to: "/admin/orders" },
+    { label: "New enquiries", value: String(enquiries.length), to: "/admin/enquiries", hot: enquiries.length > 0 },
   ];
 
   return (
     <>
       <PageHeader title="Dashboard" />
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {tiles.map((t) => (
-          <Link key={t.label} to={t.to} className={`card p-5 ${t.hot ? "border-sun-500 ring-2 ring-sun-500/30" : ""}`}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-farm-950/60">{t.label}</p>
-            <p className="mt-2 font-display text-4xl">{t.value}</p>
+          <Link key={t.label} to={t.to} className={`card p-4 ${t.hot ? "border-l-4 border-l-sun-500" : ""}`}>
+            <p className="text-sm text-ink/60">{t.label}</p>
+            <p className="mt-1 text-3xl font-bold text-ink">{loaded ? t.value : "…"}</p>
+            {t.sub && <p className="text-xs text-ink/50">{t.sub}</p>}
           </Link>
         ))}
       </div>
-      <div className="card mt-8 p-5">
-        <div className="flex items-center justify-between"><h2 className="text-xl">Latest enquiries</h2><Link to="/admin/enquiries" className="text-sm font-semibold text-farm-700">View all →</Link></div>
-        {recent.length === 0 ? <p className="mt-4 text-sm text-farm-950/60">No enquiries yet.</p> : (
-          <ul className="mt-4 divide-y divide-farm-900/10">
-            {recent.map((e) => (
-              <li key={e.id} className="flex items-center justify-between gap-3 py-3 text-sm">
-                <div className="min-w-0"><p className="font-semibold">{e.name} <span className="font-normal text-farm-950/60">· {e.products?.name ?? "General"}</span></p><p className="truncate text-farm-950/60">{e.message}</p></div>
-                <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${e.status === "new" ? "bg-sun-500 text-white" : "bg-farm-100 text-farm-800"}`}>{e.status}</span>
+
+      <div className="mt-6 grid gap-6 xl:grid-cols-[1.6fr_1fr]">
+        <section className="card p-5">
+          <h2 className="font-sans text-base font-bold normal-case">Orders per day, last 14 days</h2>
+          <p className="text-xs text-ink/50">Cancelled orders excluded. Hover or tab onto a day for its value.</p>
+          <div className="mt-3"><OrdersChart days={days} /></div>
+        </section>
+
+        <section className="card p-5">
+          <h2 className="font-sans text-base font-bold normal-case">Needs attention</h2>
+          <ul className="mt-3 space-y-2 text-sm">
+            {toHandle.slice(0, 6).map((o) => (
+              <li key={o.id} className="flex justify-between gap-2">
+                <Link to={`/admin/orders?open=${o.id}`} className="font-bold hover:underline">{o.reference}</Link>
+                <span className="truncate text-ink/60">{o.customer_name} · {ORDER_STATUS_LABEL[o.status]}</span>
+              </li>
+            ))}
+            {lowStock.map((p) => (
+              <li key={p.id} className="flex justify-between gap-2">
+                <Link to="/admin/products" className="font-bold hover:underline">{p.name}</Link>
+                <span className={p.stock_qty === 0 ? "font-bold text-sun-600" : "text-ink/60"}>{p.stock_qty === 0 ? "Out of stock" : `${p.stock_qty} left`}</span>
+              </li>
+            ))}
+            {openRequests > 0 && (
+              <li className="flex justify-between gap-2"><Link to="/admin/privacy" className="font-bold hover:underline">Privacy requests</Link><span className="text-ink/60">{openRequests} open</span></li>
+            )}
+            {loaded && toHandle.length === 0 && lowStock.length === 0 && openRequests === 0 && <li className="text-ink/50">All caught up.</li>}
+          </ul>
+        </section>
+      </div>
+
+      <section className="card mt-6 p-5">
+        <div className="flex items-center justify-between"><h2 className="font-sans text-base font-bold normal-case">Latest enquiries</h2><Link to="/admin/enquiries" className="text-sm font-bold text-farm-700">View all →</Link></div>
+        {enquiries.length === 0 ? <p className="mt-3 text-sm text-ink/50">No new enquiries.</p> : (
+          <ul className="mt-3 divide-y divide-ink/10">
+            {enquiries.map((e) => (
+              <li key={e.id} className="py-2 text-sm">
+                <p className="font-bold">{e.name} <span className="font-normal text-ink/60">· {e.products?.name ?? "General"} · {formatDate(e.created_at)}</span></p>
+                <p className="truncate text-ink/60">{e.message}</p>
               </li>
             ))}
           </ul>
         )}
-      </div>
+      </section>
     </>
   );
 }

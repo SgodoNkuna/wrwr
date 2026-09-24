@@ -27,3 +27,17 @@ export const slugify = (s: string) =>
 /** Only allow http(s) and site-relative image URLs to be rendered. */
 export const safeImage = (url: string | null | undefined) =>
   url && (/^https:\/\//i.test(url) || url.startsWith("/")) ? url : null;
+
+export const ORDER_STATUS_LABEL: Record<string, string> = {
+  new: "Received", confirmed: "Confirmed", ready: "Ready for collection", completed: "Completed", cancelled: "Cancelled",
+};
+export const PAYMENT_STATUS_LABEL: Record<string, string> = {
+  unpaid: "Not paid yet", pending: "Awaiting online payment", paid: "Paid", refunded: "Refunded", failed: "Payment failed",
+};
+export const PAYMENT_METHOD_LABEL: Record<string, string> = {
+  payfast: "Online (card / Instant EFT)", eft: "EFT (bank transfer)", cash: "Pay on collection",
+};
+
+/** "12 Sept 2026" in South African English. */
+export const formatDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" });

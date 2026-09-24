@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Cookie } from "lucide-react";
 import { useConsent } from "../lib/consent";
 
 export default function CookieBanner() {
@@ -8,11 +7,10 @@ export default function CookieBanner() {
   return (
     <div role="dialog" aria-live="polite" aria-label="Cookie consent"
       className="fixed bottom-4 left-4 right-24 z-[60] sm:right-auto sm:max-w-md">
-      <div className="card border-farm-900/20 p-5 shadow-2xl">
+      <div className="border-2 border-ink bg-paper p-5 shadow-[4px_4px_0_0_#1d2a1f]">
         <div className="flex items-start gap-3">
-          <Cookie className="mt-0.5 h-5 w-5 shrink-0 text-sun-500" />
           <div className="text-sm">
-            <p className="font-semibold">We value your privacy</p>
+            <p className="font-hand text-2xl leading-none">A quick word on cookies</p>
             <p className="mt-1 text-farm-950/70">
               We use only essential storage to run this site. With your permission, we also load Google Maps, which sets its own cookies.
               See our <Link to="/cookies" className="font-semibold text-farm-700 underline">Cookie Policy</Link> and{" "}

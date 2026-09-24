@@ -11,6 +11,7 @@ export default function UsersAdmin() {
   const { session } = useAuth();
   const [rows, setRows] = useState<Row[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   const load = async () => {
     const [p, r] = await Promise.all([
@@ -39,12 +40,13 @@ export default function UsersAdmin() {
         New staff click <b>Request staff account</b> on the login page. They appear here with no access until you give them a role.
         <b> Editors</b> manage products, categories, services and enquiries. <b>Admins</b> can also change settings, manage users, delete records and view the audit log.
       </p>
+      <label className="mb-3 flex items-center gap-2 text-sm"><input type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.target.checked)} className="h-4 w-4 accent-farm-700" /> Also show customers and people waiting for access</label>
       <ErrorBox error={error} />
       <div className="card overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-farm-50 text-left text-xs uppercase tracking-wide text-farm-950/60"><tr><th className="p-3">User</th><th className="p-3">Joined</th><th className="p-3">Editor</th><th className="p-3">Admin</th></tr></thead>
           <tbody className="divide-y divide-farm-900/10">
-            {rows.map((u) => (
+            {rows.filter((u) => showAll || u.roles.length > 0).map((u) => (
               <tr key={u.id}>
                 <td className="p-3"><p className="font-semibold">{u.full_name || "—"}</p><p className="text-xs text-farm-950/60">{u.email}</p></td>
                 <td className="p-3">{new Date(u.created_at).toLocaleDateString("en-ZA")}</td>

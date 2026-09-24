@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { supabase } from "./supabase";
-import type { BusinessSettings, HomeSettings } from "./types";
+import type { BusinessSettings, HomeSettings, PaymentSettings } from "./types";
 
 export const DEFAULT_BUSINESS: BusinessSettings = {
   name: "Tshehla AgriHub",
@@ -18,28 +18,43 @@ export const DEFAULT_BUSINESS: BusinessSettings = {
 };
 
 export const DEFAULT_HOME: HomeSettings = {
-  hero_title: "Quality livestock & fresh produce from Letsitele",
-  hero_subtitle: "Cattle, goats, pigs, poultry and farm-fresh vegetables, raised with care on Gunyula Farm.",
+  hero_title: "Raised on Gunyula Farm",
+  hero_subtitle: "Day-old chicks, cattle, goats, pigs and fresh veg from Letsitele. Order online or WhatsApp us, then collect at the farm.",
   announcement: "",
 };
 
-interface Ctx { business: BusinessSettings; home: HomeSettings; reload: () => Promise<void> }
-const SettingsCtx = createContext<Ctx>({ business: DEFAULT_BUSINESS, home: DEFAULT_HOME, reload: async () => {} });
+export const DEFAULT_PAYMENTS: PaymentSettings = {
+  online_enabled: false,
+  provider: "payfast",
+  eft_enabled: true,
+  cash_enabled: true,
+  bank_name: "",
+  account_name: "",
+  account_number: "",
+  branch_code: "",
+  eft_note: "Use your order number as the payment reference and send proof of payment on WhatsApp.",
+  delivery_note: "Collection is at the farm. Delivery can be arranged; we will confirm the cost on WhatsApp.",
+};
+
+interface Ctx { business: BusinessSettings; home: HomeSettings; payments: PaymentSettings; reload: () => Promise<void> }
+const SettingsCtx = createContext<Ctx>({ business: DEFAULT_BUSINESS, home: DEFAULT_HOME, payments: DEFAULT_PAYMENTS, reload: async () => {} });
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [business, setBusiness] = useState(DEFAULT_BUSINESS);
   const [home, setHome] = useState(DEFAULT_HOME);
+  const [payments, setPayments] = useState(DEFAULT_PAYMENTS);
 
   const reload = async () => {
     const { data } = await supabase.from("site_settings").select("key, value");
     for (const row of data ?? []) {
       if (row.key === "business") setBusiness({ ...DEFAULT_BUSINESS, ...(row.value as object) });
       if (row.key === "home") setHome({ ...DEFAULT_HOME, ...(row.value as object) });
+      if (row.key === "payments") setPayments({ ...DEFAULT_PAYMENTS, ...(row.value as object) });
     }
   };
 
   useEffect(() => { void reload(); }, []);
-  return <SettingsCtx.Provider value={{ business, home, reload }}>{children}</SettingsCtx.Provider>;
+  return <SettingsCtx.Provider value={{ business, home, payments, reload }}>{children}</SettingsCtx.Provider>;
 }
 
 export const useSettings = () => useContext(SettingsCtx);

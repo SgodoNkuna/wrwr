@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle2 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import type { Product } from "../lib/types";
 
@@ -36,16 +35,15 @@ export default function EnquiryForm({ products, defaultProductId }: { products?:
 
   if (state === "sent") {
     return (
-      <div className="card flex flex-col items-center p-8 text-center">
-        <CheckCircle2 className="h-12 w-12 text-farm-600" />
-        <h3 className="mt-3 text-xl">Thank you!</h3>
-        <p className="mt-1 text-sm text-farm-950/70">We've received your enquiry and will get back to you shortly.</p>
+      <div className="rotate-[-1deg] bg-[#fff6c9] p-8 shadow-md">
+        <h3 className="font-hand text-4xl normal-case">Thank you!</h3>
+        <p className="mt-1 text-ink/75">Your message is with us. We'll get back to you soon, usually on WhatsApp.</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} className="card space-y-4 p-6">
+    <form onSubmit={onSubmit} className="space-y-4 border-2 border-ink bg-white p-5">
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
       <div className="grid gap-4 sm:grid-cols-2">
         <div><label className="label" htmlFor="eq-name">Name *</label><input id="eq-name" name="name" required minLength={2} maxLength={100} className="input" /></div>
@@ -65,7 +63,7 @@ export default function EnquiryForm({ products, defaultProductId }: { products?:
       <div><label className="label" htmlFor="eq-msg">Message *</label><textarea id="eq-msg" name="message" required minLength={2} maxLength={2000} rows={4} className="input" /></div>
       <label className="flex items-start gap-2 text-xs text-farm-950/70">
         <input type="checkbox" name="consent" required className="mt-0.5 h-4 w-4 shrink-0 accent-farm-700" />
-        <span>I agree that Tshehla AgriHub may use my details to respond to this enquiry, as described in the <Link to="/privacy" className="font-semibold text-farm-700 underline">Privacy Policy</Link>. *</span>
+        <span>I agree that Tshehla AgriHub may use my details to respond to this enquiry, as described in the <Link to="/privacy" className="font-bold text-farm-700 underline">Privacy Policy</Link>. *</span>
       </label>
       {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{error}</p>}
       <button type="submit" disabled={state === "sending"} className="btn-primary w-full">{state === "sending" ? "Sending…" : "Send enquiry"}</button>

@@ -1,4 +1,3 @@
-import { Clock, MapPin, Phone } from "lucide-react";
 import EnquiryForm from "../components/EnquiryForm";
 import { WhatsAppIcon } from "../components/Icons";
 import MapEmbed from "../components/MapEmbed";
@@ -10,32 +9,35 @@ import { useCatalogue } from "../lib/useCatalogue";
 export default function Contact() {
   const { business } = useSettings();
   const { products } = useCatalogue();
-  usePageMeta("Contact us", `WhatsApp or call ${business.phone}, or visit us at ${business.address}.`);
+  usePageMeta("Find us", `WhatsApp or call ${business.phone}, or visit us at ${business.address}.`);
   return (
-    <div className="container-x py-12">
-      <h1 className="text-4xl sm:text-5xl">Get in touch</h1>
-      <p className="mt-2 text-farm-950/70">The fastest way to reach us is WhatsApp. You can also call or send a message below.</p>
-      <div className="mt-10 grid gap-10 lg:grid-cols-2">
-        <div className="space-y-4">
-          <a href={whatsappLink(business)} target="_blank" rel="noopener noreferrer" className="card flex items-center gap-4 p-5 hover:border-[#25D366]">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white"><WhatsAppIcon /></span>
-            <div><p className="font-semibold">WhatsApp</p><p className="text-sm text-farm-950/70">{business.phone}</p></div>
-          </a>
-          <div className="card flex items-center gap-4 p-5">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-farm-900 text-sun-400"><Phone /></span>
-            <div><p className="font-semibold">Call</p><p className="text-sm"><a href={telLink(business.phone)} className="hover:underline">{business.phone}</a>{business.alt_phone && <> · <a href={telLink(business.alt_phone)} className="hover:underline">{business.alt_phone}</a></>}</p></div>
-          </div>
-          <div className="card flex items-center gap-4 p-5">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-farm-900 text-sun-400"><MapPin /></span>
-            <div><p className="font-semibold">Visit</p><p className="text-sm text-farm-950/70">{business.address}</p></div>
-          </div>
-          <div className="card flex items-center gap-4 p-5">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-farm-900 text-sun-400"><Clock /></span>
-            <div><p className="font-semibold">Hours</p><p className="text-sm text-farm-950/70">{business.hours}</p></div>
-          </div>
-          <MapEmbed query={business.map_query} />
+    <div className="container-x py-10">
+      <h1 className="text-6xl text-farm-900 sm:text-7xl">Find us</h1>
+      <div className="mt-8 grid gap-12 lg:grid-cols-2">
+        <div>
+          <dl className="divide-y-2 divide-ink/10 border-y-2 border-ink">
+            <div className="py-4">
+              <dt className="label">WhatsApp (quickest)</dt>
+              <dd><a href={whatsappLink(business)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 font-display text-3xl text-[#1f8f4e]"><WhatsAppIcon /> {business.phone}</a></dd>
+            </div>
+            <div className="py-4">
+              <dt className="label">Call</dt>
+              <dd className="font-display text-3xl">
+                <a href={telLink(business.phone)}>{business.phone}</a>
+                {business.alt_phone && <> <span className="text-ink/30">/</span> <a href={telLink(business.alt_phone)}>{business.alt_phone}</a></>}
+              </dd>
+            </div>
+            <div className="py-4"><dt className="label">The farm</dt><dd className="text-lg">{business.address}</dd></div>
+            <div className="py-4"><dt className="label">Hours</dt><dd className="text-lg">{business.hours}</dd></div>
+            {business.email && <div className="py-4"><dt className="label">Email</dt><dd className="text-lg"><a href={`mailto:${business.email}`} className="underline">{business.email}</a></dd></div>}
+          </dl>
+          <div className="mt-6"><MapEmbed query={business.map_query} /></div>
         </div>
-        <EnquiryForm products={products} />
+        <div>
+          <h2 className="text-4xl">Or leave a message</h2>
+          <p className="mb-4 mt-1 text-ink/70">We'll call or WhatsApp you back.</p>
+          <EnquiryForm products={products} />
+        </div>
       </div>
     </div>
   );

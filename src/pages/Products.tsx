@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Search } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import { useCatalogue } from "../lib/useCatalogue";
 import { usePageMeta } from "../lib/usePageMeta";
@@ -18,28 +17,26 @@ export default function Products() {
   ), [products, active, q]);
 
   return (
-    <div className="container-x py-12">
-      <h1 className="text-4xl sm:text-5xl">Our products</h1>
-      <p className="mt-2 text-farm-950/70">Livestock, poultry and fresh produce from Gunyula Farm. Tap <b>Enquire</b> to get a price on WhatsApp.</p>
+    <div className="container-x py-10">
+      <h1 className="text-6xl text-farm-900 sm:text-7xl">What's for sale</h1>
+      <p className="mt-2 max-w-2xl text-ink/75">Priced items can be ordered here. For everything else, send us a WhatsApp and we'll tell you what we have and what it costs.</p>
 
-      <div className="mt-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-wrap gap-2">
-          {[{ slug: "all", name: "All" }, ...categories].map((c) => (
-            <button key={c.slug} onClick={() => setParams(c.slug === "all" ? {} : { category: c.slug })}
-              className={`rounded-full px-4 py-2 text-sm font-semibold ${active === c.slug ? "bg-farm-900 text-white" : "bg-white text-farm-900 ring-1 ring-farm-900/15 hover:bg-farm-50"}`}>
+      <div className="mt-8 flex flex-col gap-4 border-y-2 border-ink py-3 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-wrap gap-x-6 gap-y-2" role="tablist">
+          {[{ slug: "all", name: "Everything" }, ...categories].map((c) => (
+            <button key={c.slug} role="tab" aria-selected={active === c.slug}
+              onClick={() => setParams(c.slug === "all" ? {} : { category: c.slug })}
+              className={`font-display text-xl uppercase ${active === c.slug ? "text-sun-500" : "text-ink/60 hover:text-ink"}`}>
               {c.name}
             </button>
           ))}
         </div>
-        <label className="relative md:w-72">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-farm-950/40" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search products" className="input pl-9" aria-label="Search products" />
-        </label>
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search, e.g. goats" className="input md:w-64" aria-label="Search products" />
       </div>
 
-      {error && <p className="mt-8 rounded-lg bg-red-50 p-4 text-red-700">{error}</p>}
-      {loading ? <p className="mt-10 text-farm-950/60">Loading products…</p> : list.length === 0 ? (
-        <p className="mt-10 text-farm-950/60">No products match your search.</p>
+      {error && <p className="mt-8 border-2 border-sun-500 bg-white p-4 text-sun-600">{error}</p>}
+      {loading ? <p className="mt-10 text-ink/60">Loading…</p> : list.length === 0 ? (
+        <p className="mt-10 font-hand text-3xl text-ink/60">Nothing matches that. Try another word?</p>
       ) : (
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((p) => <ProductCard key={p.id} product={p} />)}
