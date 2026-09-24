@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { @apply bg-cream text-farm-950 font-sans antialiased; }
+  h1, h2, h3 { @apply font-display tracking-tight; }
+}
+
+@layer components {
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sun-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed; }
+  .btn-primary { @apply btn bg-sun-500 text-white hover:bg-sun-600; }
+  .btn-green { @apply btn bg-farm-900 text-white hover:bg-farm-800; }
+  .btn-outline { @apply btn border border-farm-900/20 bg-white text-farm-900 hover:bg-farm-50; }
+  .btn-whatsapp { @apply btn bg-[#25D366] text-white hover:bg-[#1ebe5b]; }
+  .btn-danger { @apply btn bg-red-600 text-white hover:bg-red-700; }
+  .input { @apply w-full rounded-lg border border-farm-900/15 bg-white px-3 py-2 text-sm outline-none focus:border-farm-700 focus:ring-2 focus:ring-farm-700/20; }
+  .label { @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-farm-900/70; }
+  .card { @apply rounded-2xl border border-farm-900/10 bg-white shadow-sm; }
+  .container-x { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
+}
