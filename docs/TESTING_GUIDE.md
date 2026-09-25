@@ -98,7 +98,7 @@ Keep the admin open in one tab and place an order in another. Within a second or
 
 ## Before launch
 See **[GO_LIVE.md](GO_LIVE.md)** for the full checklist. In short:
-1. In **Admin → Site settings**, fill in the real registered name, CIPC number, POPIA Information Officer and email. The legal pages use these values.
+1. In **Admin → Site settings**, fill in the POPIA Information Officer and a working email. The registered name and CIPC number are already set. The legal pages use these values.
 2. Create the real owner account, make it admin, then run `cleanup_test_data.sql` and delete the five test accounts (admin, editor, no-access, customer).
 3. Fill in the real bank details in **Admin → Payments** and set real stock levels.
 4. In the Supabase dashboard: set the Auth Site URL to the live domain, turn on "Leaked password protection", and keep "Confirm email" on.

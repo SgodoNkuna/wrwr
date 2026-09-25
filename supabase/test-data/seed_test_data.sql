@@ -43,9 +43,9 @@ update public.site_settings
 set value = value || '{"announcement":"TEST SITE: prices and photos are dummy values for testing only."}'
 where key = 'home';
 
--- Legal/business fields used by the Privacy, Terms and PAIA pages (placeholders to confirm with the client).
+-- Legal/business fields used by the Privacy, Terms and PAIA pages. The Information Officer is still to be confirmed.
 update public.site_settings
-set value = value || '{"email":"info@tshehla-agrihub.co.za","legal_name":"Tshehla AgriHub","registration_number":"(to be confirmed)","information_officer":"(owner name to be confirmed)"}'
+set value = value || '{"email":"info@tshehlaagrihub.co.za","legal_name":"Tshehla AgriHub (Pty) Ltd","registration_number":"2025/653280/07","information_officer":"(owner name to be confirmed)"}'
 where key = 'business';
 
 -- ── Online ordering test data (orders, stock) ────────────────────────────

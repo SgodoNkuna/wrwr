@@ -12,8 +12,8 @@ export const DEFAULT_BUSINESS: BusinessSettings = {
   address: "Gunyula Farm 38, Letsitele, Limpopo, 0885",
   hours: "Mon to Sat, 07:00 to 17:00",
   map_query: "Letsitele, Limpopo",
-  legal_name: "Tshehla AgriHub",
-  registration_number: "",
+  legal_name: "Tshehla AgriHub (Pty) Ltd",
+  registration_number: "2025/653280/07",
   information_officer: "",
 };
 
