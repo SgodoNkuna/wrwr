@@ -183,7 +183,8 @@ async function viaCurl(route) {
 }
 
 async function scan(p, name) {
-  await p.addScriptTag({ content: axeSource });
+  // Inject via DevTools (not a <script> tag) so the site's strict CSP stays fully in force.
+  if (!(await p.evaluate(() => "axe" in window))) await p.evaluate(axeSource);
   const r = await p.evaluate(async () => await window.axe.run(document, { runOnly: ["wcag2a", "wcag2aa"] }));
   const bad = r.violations.filter((v) => v.impact === "serious" || v.impact === "critical");
   axe[name] = bad.map((v) => `${v.impact} ${v.id}: ${v.nodes.slice(0, 2).map((n) => n.target.join(" ")).join(" | ")}`);
