@@ -39,11 +39,12 @@ Check it works: place a test order, then look at **Admin → Payments → Paymen
 
 ## 6. Content and data
 - [x] Registered name **Tshehla AgriHub (Pty) Ltd** and CIPC number **2025/653280/07** are set (they show in the footer and legal pages).
-- [ ] **Admin → Site settings:** the POPIA Information Officer (usually the owner) and a working email address (`info@tshehlaagrihub.co.za` is set, but the mailbox doesn't exist yet).
-- [ ] **Admin → Payments:** real bank details, and hold times if 48 or 72 hours doesn't suit.
-- [ ] Real photos for products and livestock listings (uploads are resized, and location data is removed automatically).
-- [ ] Real stock levels.
-- [ ] Run `supabase/test-data/cleanup_test_data.sql`, then delete the test accounts in Supabase → Authentication → Users:
+- [x] Business email: `Tshehla.agrihub@gmail.com`.
+- [ ] **Admin → Site settings:** the POPIA Information Officer (usually the owner).
+- [x] **Admin → Payments:** Capitec Business bank details are set. **Confirm the branch code `450105`** (Capitec Business's universal code) in the banking app. Change the hold times if 48 or 72 hours doesn't suit.
+- [ ] Real photos: goats and sheep are done. Still needed: cattle, pigs, poultry, peacocks, ostriches, peppers and beans. Uploads are resized, and location data is removed automatically.
+- [x] Prices entered by the client. Stock is set to 50 of each product for now; update it in **Products & stock**.
+- [ ] Run `supabase/test-data/cleanup_test_data.sql` (it keeps the real prices and stock), then delete the test accounts in Supabase → Authentication → Users:
       `admin.test`, `admin2.test`, `editor.test`, `noaccess.test`, `customer.test` (all `@example.com`).
 - [ ] Have an attorney review the Privacy Policy, Terms, and Orders & Returns policy.
 

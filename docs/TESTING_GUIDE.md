@@ -16,23 +16,23 @@ Passwords are shared privately and are **not stored in this repo**, because the 
 
 Staff log in at **`/admin`**. Customers log in at **`/account`** (the "Sign in" link in the header).
 
-## Dummy data loaded
-- **Prices** on all 11 products. Seven are shown publicly: broiler chicks R1 200, Brahma R250, turkeys R450, ducks R150, goats R1 800, green peppers R180, green beans R150. Four are hidden and show "Enquire for price": geese, ostriches, cattle, pigs.
-- **Pictures:** every product has a "TEST IMAGE" placeholder. Broiler chicks use the real Tau Poultry flyer.
-- **Ostriches** are marked **sold out**.
+## Data on the site
+- **Real, set by the client (25 Sep 2026):** prices for Brahma chickens R950, turkeys R900, geese R750, ducks R650 and goats R1 850. Stock is 50 of every product. Sheep and peacocks were added, and ostriches are available. The Capitec Business bank details are set.
+- **Still enquiry-only:** cattle, pigs, ostriches, sheep and peacocks show "Enquire for price".
+- **Pictures:** goats and sheep use real farm photos, and broiler chicks use the real Tau Poultry flyer. The rest still show a "TEST IMAGE" placeholder, and peacocks have no photo yet.
 - **Enquiries:** 5 samples (3 new, 1 contacted, 1 closed).
 - **Orders:** 12 test orders over the last 14 days, in every status (references `TA-TEST-00001` to `TA-TEST-00012`, all flagged TEST).
-- **Stock:** broiler chicks 40 boxes, Brahma chickens 6 (shows as low stock). Other products aren't stock-tracked.
+- **Stock:** 50 of every product. Set one to 5 or less to see the low-stock label.
 - **Livestock listings:** 6 test animals, including a Bonsmara heifer, a reserved Brahman cow, Boer goats and a group of 10 weaners.
 - **Online ordering** is on for broiler chicks, Brahmas, turkeys, ducks, green peppers and green beans. Livestock stays enquiry-only.
-- **Payments:** EFT and pay-on-collection are on. Online payment (PayFast) shows **"Coming soon"** until merchant keys are added. Bank details are empty, so customers are told they'll get them on WhatsApp.
+- **Payments:** EFT and pay-on-collection are on. Online payment (PayFast) shows **"Coming soon"** until merchant keys are added. The Capitec Business bank details show on the confirmation page of EFT orders.
 - **Spare images** for testing uploads are in [`docs/test-assets/`](test-assets/). Download them to your phone or PC first.
 
 ## Test script
 ### Public site (no login)
 1. **Home:** the TEST banner, the cookie banner, the flagship chicks with R1,200, and the "What we farm" categories all show.
 2. **Cookie banner:** click **Essential only**. On **Contact**, the map should stay hidden until you click **Load map**. Footer → **Cookie settings** reopens the banner.
-3. **Products:** filter by each category and search for "goat". Ostriches show **Sold out**. Cattle shows **Enquire for price**.
+3. **Products:** filter by each category and search for "goat". Cattle, sheep and peacocks show **Enquire for price**.
 4. **Enquire on WhatsApp** on any product opens WhatsApp to 068 828 9347 with the product name filled in.
 5. **Enquiry form:** try to send without ticking the consent box (it's blocked). Tick it and send (you see "Thank you!"). Send 3 more from the same phone number within an hour: the 4th is refused (spam guard).
 6. **Legal pages:** the footer links to Privacy, Terms, Cookies and PAIA, and each page opens.
@@ -43,7 +43,7 @@ Staff log in at **`/admin`**. Customers log in at **`/account`** (the "Sign in" 
 3. Choose **EFT**. Try to place the order without ticking the two boxes (it's blocked). Tick them and place it.
 4. The confirmation page shows your **TA-… order number**, the items, and EFT instructions. Keep the number.
 5. **Track order** (header): enter the number and the same cellphone to see the order. A different cellphone is refused.
-6. Try ordering 41 boxes of chicks: it's refused ("Only 40 left"). Livestock pages have no basket button, only WhatsApp.
+6. The quantity picker stops at 20 (the per-order limit). Cattle, pigs, sheep, ostriches and peacocks have no basket button, only WhatsApp. Goats can be ordered online, because the client switched that on.
 
 ### Customer account (`customer.test@example.com`)
 1. **Sign in** from the header. **Orders** shows TA-TEST-00012.

@@ -1,5 +1,6 @@
 -- TEST DATA ONLY. Dummy prices, placeholder images, sample enquiries and a test-site banner.
--- Safe to re-run. Undo with cleanup_test_data.sql before going live.
+-- Do NOT re-run on the live project: since 2026-09-25 it holds the client's real prices, stock
+-- and bank details, and this script would overwrite the prices and stock. Use it only on a fresh database.
 
 -- Dummy prices (Rand * 100). Some shown publicly, some kept as "Enquire for price" to test both.
 update public.products p set price_cents = v.price, show_price = v.show,
@@ -45,7 +46,7 @@ where key = 'home';
 
 -- Legal/business fields used by the Privacy, Terms and PAIA pages. The Information Officer is still to be confirmed.
 update public.site_settings
-set value = value || '{"email":"info@tshehlaagrihub.co.za","legal_name":"Tshehla AgriHub (Pty) Ltd","registration_number":"2025/653280/07","information_officer":"(owner name to be confirmed)"}'
+set value = value || '{"email":"Tshehla.agrihub@gmail.com","legal_name":"Tshehla AgriHub (Pty) Ltd","registration_number":"2025/653280/07","information_officer":"(owner name to be confirmed)"}'
 where key = 'business';
 
 -- ── Online ordering test data (orders, stock) ────────────────────────────
