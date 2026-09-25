@@ -9,7 +9,10 @@ interface Probe { configured: boolean; enabled: boolean; sandbox: boolean }
 interface PaymentEvent { id: number; event: string; processed: boolean; error: string | null; signature_valid: boolean | null; created_at: string; order_id: string | null }
 
 export default function PaymentsAdmin() {
-  const { payments, reload } = useSettings();
+  const { payments, security, reload } = useSettings();
+  const [siteKey, setSiteKey] = useState("");
+  const [secret, setSecret] = useState("");
+  const [captchaMsg, setCaptchaMsg] = useState<string | null>(null);
   const [form, setForm] = useState<PaymentSettings>(payments);
   const [probe, setProbe] = useState<Probe | null | "error">(null);
   const [events, setEvents] = useState<PaymentEvent[]>([]);
@@ -66,25 +69,48 @@ export default function PaymentsAdmin() {
           <h2 className="font-sans text-lg font-bold normal-case sm:col-span-2">EFT (bank transfer)</h2>
           <div className="sm:col-span-2"><Toggle label="Offer EFT at checkout" checked={form.eft_enabled} onChange={(v) => set("eft_enabled", v)} /></div>
           {([["bank_name", "Bank"], ["account_name", "Account name"], ["account_number", "Account number"], ["branch_code", "Branch code"]] as const).map(([k, label]) => (
-            <div key={k}><label className="label">{label}</label><input className="input" maxLength={100} value={form[k]} onChange={(e) => set(k, e.target.value)} /></div>
+            <label key={k} className="block"><span className="label">{label}</span><input className="input" maxLength={100} value={form[k]} onChange={(e) => set(k, e.target.value)} /></label>
           ))}
-          <div className="sm:col-span-2"><label className="label">Note shown with bank details</label><input className="input" maxLength={300} value={form.eft_note} onChange={(e) => set("eft_note", e.target.value)} /></div>
-          <p className="text-xs text-ink/50 sm:col-span-2">If bank details are empty, customers are told you'll send them on WhatsApp.</p>
+          <label className="block sm:col-span-2"><span className="label">Note shown with bank details</span><input className="input" maxLength={300} value={form.eft_note} onChange={(e) => set("eft_note", e.target.value)} /></label>
+          <p className="text-xs text-ink/70 sm:col-span-2">If bank details are empty, customers are told you'll send them on WhatsApp.</p>
+        </section>
+
+        <section className="card grid gap-4 p-5 sm:grid-cols-2">
+          <h2 className="font-sans text-lg font-bold normal-case sm:col-span-2">Holding stock for unpaid orders</h2>
+          <p className="text-sm text-ink/70 sm:col-span-2">Unpaid orders that aren't confirmed in time are cancelled automatically and their stock goes back on sale. This stops fake orders from blocking real customers.</p>
+          <div><label className="label" htmlFor="pay-hold">EFT / online: hold for (hours)</label><input id="pay-hold" type="number" min={1} max={336} className="input" value={form.hold_hours} onChange={(e) => set("hold_hours", Math.max(1, Math.floor(Number(e.target.value) || 48)))} /></div>
+          <div><label className="label" htmlFor="pay-cash-hold">Pay on collection: confirm within (hours)</label><input id="pay-cash-hold" type="number" min={1} max={336} className="input" value={form.cash_hold_hours} onChange={(e) => set("cash_hold_hours", Math.max(1, Math.floor(Number(e.target.value) || 72)))} /></div>
         </section>
 
         <section className="card space-y-3 p-5">
           <h2 className="font-sans text-lg font-bold normal-case">Pay on collection & delivery</h2>
           <Toggle label="Offer 'Pay when you collect'" checked={form.cash_enabled} onChange={(v) => set("cash_enabled", v)} />
-          <div><label className="label">Collection / delivery note at checkout</label><input className="input" maxLength={300} value={form.delivery_note} onChange={(e) => set("delivery_note", e.target.value)} /></div>
+          <label className="block"><span className="label">Collection / delivery note at checkout</span><input className="input" maxLength={300} value={form.delivery_note} onChange={(e) => set("delivery_note", e.target.value)} /></label>
         </section>
 
         <button className="btn-primary">Save payment settings</button>
       </form>
 
+      <section className="card mt-6 space-y-3 p-5">
+        <h2 className="font-sans text-lg font-bold normal-case">"I'm human" check at checkout (Cloudflare Turnstile)</h2>
+        <p className="text-sm">Status: {security.captcha_site_key ? <b className="text-farm-700">on</b> : <b>off</b>}. Blocks bots from placing fake orders. Free: create a Turnstile widget for your domain at dash.cloudflare.com, then paste both keys here. The secret key goes straight into the encrypted Supabase Vault and never comes back to the browser.</p>
+        <form className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]" onSubmit={async (e) => {
+          e.preventDefault(); setCaptchaMsg(null);
+          const { error } = await supabase.rpc("set_turnstile_keys", { p_site_key: siteKey, p_secret: secret });
+          if (error) return setCaptchaMsg(error.message);
+          setSiteKey(""); setSecret(""); await reload(); setCaptchaMsg(siteKey && secret ? "Saved. Checkout now asks for the check." : "Turned off.");
+        }}>
+          <input className="input" placeholder="Site key" value={siteKey} onChange={(e) => setSiteKey(e.target.value)} aria-label="Turnstile site key" />
+          <input className="input" type="password" placeholder="Secret key" value={secret} onChange={(e) => setSecret(e.target.value)} aria-label="Turnstile secret key" autoComplete="off" />
+          <button className="btn-green">{siteKey && secret ? "Save keys" : "Turn off"}</button>
+        </form>
+        {captchaMsg && <p className="text-sm font-bold">{captchaMsg}</p>}
+      </section>
+
       <section className="card mt-6 p-5">
         <h2 className="font-sans text-lg font-bold normal-case">Payment log</h2>
-        <p className="text-xs text-ink/50">Every online checkout and PayFast notification is logged here, including rejected ones.</p>
-        {events.length === 0 ? <p className="mt-3 text-sm text-ink/50">Nothing yet.</p> : (
+        <p className="text-xs text-ink/70">Every online checkout and PayFast notification is logged here, including rejected ones.</p>
+        {events.length === 0 ? <p className="mt-3 text-sm text-ink/70">Nothing yet.</p> : (
           <table className="mt-3 w-full text-xs">
             <tbody className="divide-y divide-ink/10">
               {events.map((e) => (

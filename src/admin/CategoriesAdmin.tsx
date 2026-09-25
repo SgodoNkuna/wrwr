@@ -43,10 +43,10 @@ export default function CategoriesAdmin() {
       <div className="space-y-3">
         {items.map((c, i) => (
           <div key={c.id || `new-${i}`} className="card grid gap-3 p-4 md:grid-cols-[1fr_1fr_2fr_80px_auto_auto] md:items-end">
-            <div><label className="label">Name</label><input className="input" maxLength={80} value={c.name} onChange={(e) => set(i, { name: e.target.value, slug: c.id ? c.slug : slugify(e.target.value) })} /></div>
-            <div><label className="label">Slug</label><input className="input" value={c.slug} onChange={(e) => set(i, { slug: slugify(e.target.value) })} /></div>
-            <div><label className="label">Description</label><input className="input" maxLength={500} value={c.description ?? ""} onChange={(e) => set(i, { description: e.target.value })} /></div>
-            <div><label className="label">Order</label><input type="number" className="input" value={c.sort_order} onChange={(e) => set(i, { sort_order: Number(e.target.value) })} /></div>
+            <label className="block"><span className="label">Name</span><input className="input" maxLength={80} value={c.name} onChange={(e) => set(i, { name: e.target.value, slug: c.id ? c.slug : slugify(e.target.value) })} /></label>
+            <label className="block"><span className="label">Slug</span><input className="input" value={c.slug} onChange={(e) => set(i, { slug: slugify(e.target.value) })} /></label>
+            <label className="block"><span className="label">Description</span><input className="input" maxLength={500} value={c.description ?? ""} onChange={(e) => set(i, { description: e.target.value })} /></label>
+            <label className="block"><span className="label">Order</span><input type="number" className="input" value={c.sort_order} onChange={(e) => set(i, { sort_order: Number(e.target.value) })} /></label>
             <Toggle label="Visible" checked={c.published} onChange={(v) => set(i, { published: v })} />
             <div className="flex gap-1">
               <button onClick={() => save(c)} className="btn-green px-3" title="Save"><Save className="h-4 w-4" /></button>

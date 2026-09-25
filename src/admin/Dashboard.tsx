@@ -59,9 +59,9 @@ export default function Dashboard() {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {tiles.map((t) => (
           <Link key={t.label} to={t.to} className={`card p-4 ${t.hot ? "border-l-4 border-l-sun-500" : ""}`}>
-            <p className="text-sm text-ink/60">{t.label}</p>
+            <p className="text-sm text-ink/70">{t.label}</p>
             <p className="mt-1 text-3xl font-bold text-ink">{loaded ? t.value : "…"}</p>
-            {t.sub && <p className="text-xs text-ink/50">{t.sub}</p>}
+            {t.sub && <p className="text-xs text-ink/70">{t.sub}</p>}
           </Link>
         ))}
       </div>
@@ -69,7 +69,7 @@ export default function Dashboard() {
       <div className="mt-6 grid gap-6 xl:grid-cols-[1.6fr_1fr]">
         <section className="card p-5">
           <h2 className="font-sans text-base font-bold normal-case">Orders per day, last 14 days</h2>
-          <p className="text-xs text-ink/50">Cancelled orders excluded. Hover or tab onto a day for its value.</p>
+          <p className="text-xs text-ink/70">Cancelled orders excluded. Hover or tab onto a day for its value.</p>
           <div className="mt-3"><OrdersChart days={days} /></div>
         </section>
 
@@ -79,31 +79,31 @@ export default function Dashboard() {
             {toHandle.slice(0, 6).map((o) => (
               <li key={o.id} className="flex justify-between gap-2">
                 <Link to={`/admin/orders?open=${o.id}`} className="font-bold hover:underline">{o.reference}</Link>
-                <span className="truncate text-ink/60">{o.customer_name} · {ORDER_STATUS_LABEL[o.status]}</span>
+                <span className="truncate text-ink/70">{o.customer_name} · {ORDER_STATUS_LABEL[o.status]}</span>
               </li>
             ))}
             {lowStock.map((p) => (
               <li key={p.id} className="flex justify-between gap-2">
                 <Link to="/admin/products" className="font-bold hover:underline">{p.name}</Link>
-                <span className={p.stock_qty === 0 ? "font-bold text-sun-600" : "text-ink/60"}>{p.stock_qty === 0 ? "Out of stock" : `${p.stock_qty} left`}</span>
+                <span className={p.stock_qty === 0 ? "font-bold text-sun-600" : "text-ink/70"}>{p.stock_qty === 0 ? "Out of stock" : `${p.stock_qty} left`}</span>
               </li>
             ))}
             {openRequests > 0 && (
-              <li className="flex justify-between gap-2"><Link to="/admin/privacy" className="font-bold hover:underline">Privacy requests</Link><span className="text-ink/60">{openRequests} open</span></li>
+              <li className="flex justify-between gap-2"><Link to="/admin/privacy" className="font-bold hover:underline">Privacy requests</Link><span className="text-ink/70">{openRequests} open</span></li>
             )}
-            {loaded && toHandle.length === 0 && lowStock.length === 0 && openRequests === 0 && <li className="text-ink/50">All caught up.</li>}
+            {loaded && toHandle.length === 0 && lowStock.length === 0 && openRequests === 0 && <li className="text-ink/70">All caught up.</li>}
           </ul>
         </section>
       </div>
 
       <section className="card mt-6 p-5">
         <div className="flex items-center justify-between"><h2 className="font-sans text-base font-bold normal-case">Latest enquiries</h2><Link to="/admin/enquiries" className="text-sm font-bold text-farm-700">View all →</Link></div>
-        {enquiries.length === 0 ? <p className="mt-3 text-sm text-ink/50">No new enquiries.</p> : (
+        {enquiries.length === 0 ? <p className="mt-3 text-sm text-ink/70">No new enquiries.</p> : (
           <ul className="mt-3 divide-y divide-ink/10">
             {enquiries.map((e) => (
               <li key={e.id} className="py-2 text-sm">
-                <p className="font-bold">{e.name} <span className="font-normal text-ink/60">· {e.products?.name ?? "General"} · {formatDate(e.created_at)}</span></p>
-                <p className="truncate text-ink/60">{e.message}</p>
+                <p className="font-bold">{e.name} <span className="font-normal text-ink/70">· {e.products?.name ?? "General"} · {formatDate(e.created_at)}</span></p>
+                <p className="truncate text-ink/70">{e.message}</p>
               </li>
             ))}
           </ul>

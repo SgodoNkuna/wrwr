@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import { useCart } from "../lib/cart";
@@ -9,10 +9,13 @@ import { supabase } from "../lib/supabase";
 import type { PaymentMethod } from "../lib/types";
 import { usePageMeta } from "../lib/usePageMeta";
 import { ItemsTable } from "../components/OrderView";
+import Turnstile from "../components/Turnstile";
 
 export default function Checkout() {
   const { lines, total, clear } = useCart();
-  const { payments } = useSettings();
+  const { payments, security } = useSettings();
+  const [captcha, setCaptcha] = useState<string | null>(null);
+  const onCaptcha = useCallback((t: string | null) => setCaptcha(t), []);
   const { session } = useAuth();
   const nav = useNavigate();
   const [fulfilment, setFulfilment] = useState<"collect" | "delivery">("collect");
@@ -47,6 +50,7 @@ export default function Checkout() {
     const f = new FormData(e.currentTarget);
     if (f.get("website")) return; // honeypot
     if (!method) return setError("Please choose how you'll pay.");
+    if (security.captcha_site_key && !captcha) return setError("Please complete the \"I'm human\" check.");
     setBusy(true); setError(null);
     try {
       const phone = String(f.get("phone")).trim();
@@ -54,6 +58,7 @@ export default function Checkout() {
         name: String(f.get("name")).trim(), phone, email: String(f.get("email") || "").trim(),
         fulfilment, delivery_address: String(f.get("delivery_address") || ""), notes: String(f.get("notes") || ""),
         payment_method: method, consent: f.get("consent") === "on", accept_terms: f.get("terms") === "on",
+        captcha_token: captcha ?? undefined,
       });
       rememberOrder(order.reference, order.order_id, phone);
       clear();
@@ -88,7 +93,7 @@ export default function Checkout() {
               <label key={v} className={`flex cursor-pointer items-start gap-3 border-2 p-3 ${fulfilment === v ? "border-ink bg-white" : "border-ink/20"}`}>
                 <input type="radio" name="fulfilment" checked={fulfilment === v} onChange={() => setFulfilment(v)} className="mt-1 accent-farm-800" />
                 <span><b>{v === "collect" ? "I'll collect at the farm" : "Please arrange delivery"}</b>
-                  <span className="block text-sm text-ink/60">{v === "collect" ? "Gunyula Farm, Letsitele. We'll WhatsApp you when it's ready." : "We'll WhatsApp you a delivery quote before anything is sent."}</span></span>
+                  <span className="block text-sm text-ink/70">{v === "collect" ? "Gunyula Farm, Letsitele. We'll WhatsApp you when it's ready." : "We'll WhatsApp you a delivery quote before anything is sent."}</span></span>
               </label>
             ))}
             {fulfilment === "delivery" && (
@@ -104,7 +109,7 @@ export default function Checkout() {
               <label key={o.id} className={`flex items-start gap-3 border-2 p-3 ${!o.enabled ? "cursor-not-allowed border-dashed border-ink/20 opacity-60" : method === o.id ? "cursor-pointer border-ink bg-white" : "cursor-pointer border-ink/20"}`}>
                 <input type="radio" name="payment" disabled={!o.enabled} checked={method === o.id} onChange={() => setMethod(o.id)} className="mt-1 accent-farm-800" />
                 <span><b>{o.label}</b>{!o.enabled && o.id === "payfast" && <span className="ml-2 bg-yolk px-1.5 py-0.5 text-[11px] font-bold uppercase">Coming soon</span>}
-                  <span className="block text-sm text-ink/60">{o.note}</span></span>
+                  <span className="block text-sm text-ink/70">{o.note}</span></span>
               </label>
             ))}
           </fieldset>
@@ -115,6 +120,7 @@ export default function Checkout() {
             <label className="flex items-start gap-2"><input type="checkbox" name="consent" required className="mt-0.5 h-4 w-4 shrink-0 accent-farm-800" />
               <span>I agree that my details are used to process this order, as set out in the <Link to="/privacy" target="_blank" className="font-bold underline">Privacy Policy</Link>. *</span></label>
           </div>
+          {security.captcha_site_key && <Turnstile siteKey={security.captcha_site_key} onToken={onCaptcha} />}
         </div>
 
         <aside className="self-start border-2 border-ink bg-white p-5 lg:sticky lg:top-24">
@@ -122,7 +128,7 @@ export default function Checkout() {
           <div className="mt-3"><ItemsTable items={lines.map((l) => ({ product_name: l.name, unit: l.unit, quantity: l.quantity, line_total_cents: l.unit_price_cents * l.quantity }))} total={total} /></div>
           {error && <p className="mt-3 border-2 border-sun-500 bg-sun-500/10 px-3 py-2 text-sm font-bold text-sun-600" role="alert">{error}</p>}
           <button type="submit" disabled={busy} className="btn-primary mt-4 w-full py-3 text-base">{busy ? "Placing order…" : `Place order · ${formatRand(total)}`}</button>
-          <p className="mt-2 text-xs text-ink/60">Prices are in Rand. We check stock and prices again when you place the order.</p>
+          <p className="mt-2 text-xs text-ink/70">Prices are in Rand. We check stock and prices again when you place the order.</p>
         </aside>
       </form>
     </div>

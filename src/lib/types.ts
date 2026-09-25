@@ -29,6 +29,7 @@ export interface Product {
   stock_qty: number | null;
   max_per_order: number;
   updated_at?: string;
+  price_updated_at?: string;
   categories?: Pick<Category, "slug" | "name"> | null;
 }
 
@@ -122,6 +123,8 @@ export interface TrackedOrder {
   payment_status: PaymentStatus;
   payment_method: PaymentMethod;
   fulfilment: "collect" | "delivery";
+  subtotal_cents?: number;
+  delivery_cents?: number;
   total_cents: number;
   created_at: string;
   items: OrderItem[];
@@ -138,6 +141,52 @@ export interface PaymentSettings {
   branch_code: string;
   eft_note: string;
   delivery_note: string;
+  hold_hours: number;
+  cash_hold_hours: number;
+}
+
+export interface SecuritySettings {
+  require_staff_mfa: boolean;
+  two_person_approval: boolean;
+  captcha_site_key: string;
+}
+
+export interface Animal {
+  id: string;
+  product_id: string;
+  tag: string;
+  title: string | null;
+  breed: string | null;
+  sex: "male" | "female" | "mixed" | null;
+  age_months: number | null;
+  weight_kg: number | null;
+  quantity: number;
+  price_cents: number | null;
+  show_price: boolean;
+  status: "available" | "reserved" | "sold";
+  image_url: string | null;
+  notes: string | null;
+  published: boolean;
+  sort_order: number;
+  products?: { name: string; slug: string } | null;
+}
+
+export type ApprovalAction = "grant_admin" | "revoke_admin" | "delete_order" | "refund_order" | "anonymise_customer" | "disable_two_person";
+export interface PendingApproval {
+  id: string;
+  action: ApprovalAction;
+  target_id: string;
+  summary: string;
+  reason: string;
+  status: "pending" | "executed" | "rejected" | "failed" | "expired";
+  requested_by: string | null;
+  requested_by_email: string | null;
+  decided_by: string | null;
+  decided_by_email: string | null;
+  decision_note: string | null;
+  result: string | null;
+  created_at: string;
+  decided_at: string | null;
 }
 
 export interface Profile {

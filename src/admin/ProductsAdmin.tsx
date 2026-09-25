@@ -2,7 +2,9 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Eye, EyeOff, Pencil, Plus, Star, Trash2, Upload } from "lucide-react";
 import { formatRand, safeImage, slugify } from "../lib/format";
 import { useAuth } from "../lib/auth";
-import { IMAGE_BUCKET, supabase } from "../lib/supabase";
+import { supabase } from "../lib/supabase";
+import { uploadImage } from "../lib/upload";
+import { IMAGE_TYPES } from "../lib/image";
 import type { Category, Product } from "../lib/types";
 import { ErrorBox, Modal, PageHeader, Toggle } from "./ui";
 
@@ -13,8 +15,6 @@ const empty: Draft = {
   orderable: false, stock_qty: null, max_per_order: 20,
 };
 
-const MAX_BYTES = 5 * 1024 * 1024;
-const TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export default function ProductsAdmin() {
   const { isAdmin } = useAuth();
@@ -46,23 +46,19 @@ export default function ProductsAdmin() {
   };
 
   const upload = async (file: File) => {
-    if (!TYPES.includes(file.type)) return setError("Only JPG, PNG or WebP images are allowed.");
-    if (file.size > MAX_BYTES) return setError("Images must be 5 MB or smaller.");
-    setBusy(true);
-    const ext = file.type.split("/")[1];
-    const path = `products/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from(IMAGE_BUCKET).upload(path, file, { contentType: file.type, upsert: false });
+    setBusy(true); setError(null);
+    try {
+      const url = await uploadImage(file, "products");
+      setDraft((d) => (d ? { ...d, image_url: url } : d));
+    } catch (e) { setError((e as Error).message); }
     setBusy(false);
-    if (error) return setError(error.message);
-    const { data } = supabase.storage.from(IMAGE_BUCKET).getPublicUrl(path);
-    setDraft((d) => (d ? { ...d, image_url: data.publicUrl } : d));
   };
 
   const save = async (e: FormEvent) => {
     e.preventDefault();
     if (!draft) return;
     setBusy(true); setError(null);
-    const { id, updated_at: _u, ...values } = draft;
+    const { id, updated_at: _u, price_updated_at: _p, ...values } = draft;
     const row = { ...values, slug: values.slug || slugify(values.name), image_url: values.image_url || null,
       highlights: values.highlights.map((h) => h.trim()).filter(Boolean) };
     const { error } = id ? await supabase.from("products").update(row).eq("id", id) : await supabase.from("products").insert(row);
@@ -77,7 +73,7 @@ export default function ProductsAdmin() {
       <ErrorBox error={error} />
       <div className="card overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-farm-50 text-left text-xs uppercase tracking-wide text-farm-950/60">
+          <thead className="bg-farm-50 text-left text-xs uppercase tracking-wide text-ink/70">
             <tr><th className="p-3">Product</th><th className="p-3">Category</th><th className="p-3">Price</th><th className="p-3">Stock</th><th className="p-3">Status</th><th className="p-3 text-right">Actions</th></tr>
           </thead>
           <tbody className="divide-y divide-farm-900/10">
@@ -86,13 +82,13 @@ export default function ProductsAdmin() {
                 <td className="p-3">
                   <div className="flex items-center gap-3">
                     {safeImage(p.image_url) ? <img src={safeImage(p.image_url)!} alt="" className="h-10 w-10 rounded-lg object-cover" /> : <div className="h-10 w-10 rounded-lg bg-farm-100" />}
-                    <div><p className="font-semibold">{p.name}</p><p className="text-xs text-farm-950/50">/{p.slug}</p></div>
+                    <div><p className="font-semibold">{p.name}</p><p className="text-xs text-ink/70">/{p.slug}</p></div>
                   </div>
                 </td>
                 <td className="p-3">{p.categories?.name ?? "—"}</td>
-                <td className="p-3">{p.show_price && p.price_cents != null ? formatRand(p.price_cents) : <span className="text-farm-950/50">Enquire</span>}</td>
+                <td className="p-3">{p.show_price && p.price_cents != null ? formatRand(p.price_cents) : <span className="text-ink/70">Enquire</span>}</td>
                 <td className="p-3">
-                  {p.stock_qty == null ? <span className="text-ink/40">not tracked</span> : (
+                  {p.stock_qty == null ? <span className="text-ink/65">not tracked</span> : (
                     <div className="flex items-center gap-1">
                       <button className="rounded-tag border border-ink/20 px-1.5 font-bold" aria-label={`One less ${p.name}`} onClick={() => patch(p.id, { stock_qty: Math.max(0, p.stock_qty! - 1), in_stock: p.stock_qty! - 1 > 0 })}>−</button>
                       <span className={`w-8 text-center font-bold ${p.stock_qty === 0 ? "text-sun-600" : ""}`}>{p.stock_qty}</span>
@@ -127,28 +123,28 @@ export default function ProductsAdmin() {
           <form onSubmit={save} className="space-y-4">
             <ErrorBox error={error} />
             <div className="grid gap-4 sm:grid-cols-2">
-              <div><label className="label">Name *</label><input required maxLength={120} className="input" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value, slug: draft.id ? draft.slug : slugify(e.target.value) })} /></div>
-              <div><label className="label">URL slug *</label><input required pattern="[a-z0-9-]{1,80}" className="input" value={draft.slug} onChange={(e) => setDraft({ ...draft, slug: slugify(e.target.value) })} /></div>
-              <div><label className="label">Category</label>
-                <select className="input" value={draft.category_id ?? ""} onChange={(e) => setDraft({ ...draft, category_id: e.target.value || null })}>
+              <label className="block"><span className="label">Name *</span><input required maxLength={120} className="input" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value, slug: draft.id ? draft.slug : slugify(e.target.value) })} /></label>
+              <label className="block"><span className="label">URL slug *</span><input required pattern="[a-z0-9-]{1,80}" className="input" value={draft.slug} onChange={(e) => setDraft({ ...draft, slug: slugify(e.target.value) })} /></label>
+              <div><label className="label" htmlFor="pr-category">Category</label>
+                <select id="pr-category" className="input" value={draft.category_id ?? ""} onChange={(e) => setDraft({ ...draft, category_id: e.target.value || null })}>
                   <option value="">None</option>{cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
-              <div><label className="label">Unit</label><input maxLength={60} className="input" placeholder="e.g. Box of 100 chicks" value={draft.unit ?? ""} onChange={(e) => setDraft({ ...draft, unit: e.target.value })} /></div>
-              <div><label className="label">Price (Rand)</label><input type="number" min={0} step="0.01" className="input" value={draft.price_cents != null ? draft.price_cents / 100 : ""} onChange={(e) => setDraft({ ...draft, price_cents: e.target.value === "" ? null : Math.round(Number(e.target.value) * 100) })} /></div>
-              <div><label className="label">Sort order</label><input type="number" className="input" value={draft.sort_order} onChange={(e) => setDraft({ ...draft, sort_order: Number(e.target.value) })} /></div>
-              <div><label className="label">Stock on hand (blank = don't track)</label><input type="number" min={0} className="input" value={draft.stock_qty ?? ""} onChange={(e) => setDraft({ ...draft, stock_qty: e.target.value === "" ? null : Math.max(0, Math.floor(Number(e.target.value))) })} /></div>
-              <div><label className="label">Most per online order</label><input type="number" min={1} max={1000} className="input" value={draft.max_per_order} onChange={(e) => setDraft({ ...draft, max_per_order: Math.min(1000, Math.max(1, Math.floor(Number(e.target.value) || 1))) })} /></div>
+              <label className="block"><span className="label">Unit</span><input maxLength={60} className="input" placeholder="e.g. Box of 100 chicks" value={draft.unit ?? ""} onChange={(e) => setDraft({ ...draft, unit: e.target.value })} /></label>
+              <label className="block"><span className="label">Price (Rand)</span><input type="number" min={0} step="0.01" className="input" value={draft.price_cents != null ? draft.price_cents / 100 : ""} onChange={(e) => setDraft({ ...draft, price_cents: e.target.value === "" ? null : Math.round(Number(e.target.value) * 100) })} /></label>
+              <label className="block"><span className="label">Sort order</span><input type="number" className="input" value={draft.sort_order} onChange={(e) => setDraft({ ...draft, sort_order: Number(e.target.value) })} /></label>
+              <label className="block"><span className="label">Stock on hand (blank = don't track)</span><input type="number" min={0} className="input" value={draft.stock_qty ?? ""} onChange={(e) => setDraft({ ...draft, stock_qty: e.target.value === "" ? null : Math.max(0, Math.floor(Number(e.target.value))) })} /></label>
+              <label className="block"><span className="label">Most per online order</span><input type="number" min={1} max={1000} className="input" value={draft.max_per_order} onChange={(e) => setDraft({ ...draft, max_per_order: Math.min(1000, Math.max(1, Math.floor(Number(e.target.value) || 1))) })} /></label>
             </div>
-            <div><label className="label">Short summary</label><input maxLength={300} className="input" value={draft.summary ?? ""} onChange={(e) => setDraft({ ...draft, summary: e.target.value })} /></div>
-            <div><label className="label">Description</label><textarea rows={5} maxLength={5000} className="input" value={draft.description ?? ""} onChange={(e) => setDraft({ ...draft, description: e.target.value })} /></div>
-            <div><label className="label">Highlights (one per line)</label><textarea rows={3} className="input" value={draft.highlights.join("\n")} onChange={(e) => setDraft({ ...draft, highlights: e.target.value.split("\n") })} /></div>
+            <label className="block"><span className="label">Short summary</span><input maxLength={300} className="input" value={draft.summary ?? ""} onChange={(e) => setDraft({ ...draft, summary: e.target.value })} /></label>
+            <label className="block"><span className="label">Description</span><textarea rows={5} maxLength={5000} className="input" value={draft.description ?? ""} onChange={(e) => setDraft({ ...draft, description: e.target.value })} /></label>
+            <label className="block"><span className="label">Highlights (one per line)</span><textarea rows={3} className="input" value={draft.highlights.join("\n")} onChange={(e) => setDraft({ ...draft, highlights: e.target.value.split("\n") })} /></label>
             <div>
-              <label className="label">Image</label>
+              <p className="label">Image</p>
               <div className="flex items-center gap-3">
                 {safeImage(draft.image_url) && <img src={safeImage(draft.image_url)!} alt="" className="h-16 w-16 rounded-lg object-cover" />}
                 <label className="btn-outline cursor-pointer"><Upload className="h-4 w-4" />{busy ? "Uploading…" : "Upload"}
-                  <input type="file" accept={TYPES.join(",")} className="hidden" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
+                  <input type="file" accept={IMAGE_TYPES.join(",")} className="hidden" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
                 </label>
                 {draft.image_url && <button type="button" className="text-sm text-red-600" onClick={() => setDraft({ ...draft, image_url: "" })}>Remove</button>}
               </div>

@@ -41,13 +41,13 @@ export default function SettingsAdmin() {
         <section className="card grid gap-4 p-5 sm:grid-cols-2">
           <h2 className="text-xl sm:col-span-2">Business details</h2>
           {bizFields.map(([k, label]) => (
-            <div key={k}><label className="label">{label}</label><input className="input" maxLength={200} value={biz[k]} onChange={(e) => setBiz({ ...biz, [k]: e.target.value })} /></div>
+            <label key={k} className="block"><span className="label">{label}</span><input className="input" maxLength={200} value={biz[k]} onChange={(e) => setBiz({ ...biz, [k]: e.target.value })} /></label>
           ))}
         </section>
         <section className="card grid gap-4 p-5">
           <h2 className="text-xl">Homepage</h2>
           {homeFields.map(([k, label]) => (
-            <div key={k}><label className="label">{label}</label><input className="input" maxLength={300} value={hm[k]} onChange={(e) => setHm({ ...hm, [k]: e.target.value })} /></div>
+            <label key={k} className="block"><span className="label">{label}</span><input className="input" maxLength={300} value={hm[k]} onChange={(e) => setHm({ ...hm, [k]: e.target.value })} /></label>
           ))}
         </section>
         <button className="btn-primary">Save settings</button>

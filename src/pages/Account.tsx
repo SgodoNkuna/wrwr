@@ -10,7 +10,7 @@ import { usePageMeta } from "../lib/usePageMeta";
 export default function Account() {
   const { session, loading, isStaff } = useAuth();
   usePageMeta("My account", "Your Tshehla AgriHub orders and details.", { noindex: true });
-  if (loading) return <div className="container-x py-16 text-ink/60">Loading…</div>;
+  if (loading) return <div className="container-x py-16 text-ink/70">Loading…</div>;
   if (!session) return <CustomerAuth />;
   if (isStaff) return (
     <div className="container-x py-16">
@@ -56,7 +56,7 @@ function CustomerAuth() {
         <p className="mt-3 max-w-md text-ink/75">
           You don't need an account to order. With one, your details are filled in for you and you can see all your orders in one place.
         </p>
-        <p className="mt-6 font-hand text-2xl text-ink/60">Staff? Use the <Link to="/admin" className="underline">staff login</Link>.</p>
+        <p className="mt-6 font-hand text-2xl text-ink/70">Staff? Use the <Link to="/admin" className="underline">staff login</Link>.</p>
       </div>
       <form onSubmit={submit} className="space-y-4 border-2 border-ink bg-white p-6">
         {mode === "up" && (
@@ -69,7 +69,7 @@ function CustomerAuth() {
         {mode !== "reset" && (
           <div><label className="label" htmlFor="ac-pw">Password *</label>
             <input id="ac-pw" name="password" type="password" required minLength={mode === "up" ? 10 : 1} className="input" autoComplete={mode === "up" ? "new-password" : "current-password"} />
-            {mode === "up" && <p className="mt-1 text-xs text-ink/50">At least 10 characters.</p>}
+            {mode === "up" && <p className="mt-1 text-xs text-ink/70">At least 10 characters.</p>}
           </div>
         )}
         {mode === "up" && (
@@ -124,7 +124,7 @@ function CustomerDashboard({ userId }: { userId: string }) {
       <div className="mt-6 flex gap-6 border-b-2 border-ink" role="tablist">
         {TABS.map((t) => (
           <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)}
-            className={`-mb-0.5 border-b-4 pb-2 font-display text-xl uppercase ${tab === t ? "border-sun-500" : "border-transparent text-ink/50"}`}>{t}</button>
+            className={`-mb-0.5 border-b-4 pb-2 font-display text-xl uppercase ${tab === t ? "border-sun-500" : "border-transparent text-ink/70"}`}>{t}</button>
         ))}
       </div>
       <div className="mt-6">
@@ -138,7 +138,7 @@ function CustomerDashboard({ userId }: { userId: string }) {
 }
 
 function OrdersTab({ orders }: { orders: Order[] }) {
-  if (orders.length === 0) return <p className="font-hand text-3xl text-ink/60">No orders yet. <Link to="/products" className="underline">Have a look at what's for sale.</Link></p>;
+  if (orders.length === 0) return <p className="font-hand text-3xl text-ink/70">No orders yet. <Link to="/products" className="underline">Have a look at what's for sale.</Link></p>;
   return (
     <ul className="space-y-4">
       {orders.map((o) => (
@@ -147,7 +147,7 @@ function OrdersTab({ orders }: { orders: Order[] }) {
             <Link to={`/order/${o.reference}`} className="font-display text-2xl uppercase hover:text-sun-500">{o.reference}</Link>
             <span className="font-display text-2xl">{formatRand(o.total_cents)}</span>
           </div>
-          <p className="text-sm text-ink/60">{formatDate(o.created_at)} · {o.order_items?.map((i) => `${i.quantity} × ${i.product_name}`).join(", ")} · {PAYMENT_STATUS_LABEL[o.payment_status]}</p>
+          <p className="text-sm text-ink/70">{formatDate(o.created_at)} · {o.order_items?.map((i) => `${i.quantity} × ${i.product_name}`).join(", ")} · {PAYMENT_STATUS_LABEL[o.payment_status]}</p>
           <div className="mt-2"><StatusTrail status={o.status} /></div>
         </li>
       ))}
@@ -156,12 +156,12 @@ function OrdersTab({ orders }: { orders: Order[] }) {
 }
 
 function MessagesTab({ enquiries }: { enquiries: Enquiry[] }) {
-  if (enquiries.length === 0) return <p className="text-ink/60">Questions you send us while signed in will show here.</p>;
+  if (enquiries.length === 0) return <p className="text-ink/70">Questions you send us while signed in will show here.</p>;
   return (
     <ul className="divide-y-2 divide-ink/10 border-y-2 border-ink">
       {enquiries.map((e) => (
         <li key={e.id} className="py-3">
-          <p className="text-sm text-ink/60">{formatDate(e.created_at)} · {e.products?.name ?? "General"} · {e.status === "new" ? "Waiting for us" : e.status === "contacted" ? "We've replied" : "Closed"}</p>
+          <p className="text-sm text-ink/70">{formatDate(e.created_at)} · {e.products?.name ?? "General"} · {e.status === "new" ? "Waiting for us" : e.status === "contacted" ? "We've replied" : "Closed"}</p>
           <p className="mt-1">{e.message}</p>
         </li>
       ))}
@@ -180,7 +180,7 @@ function DetailsTab({ profile, onSaved }: { profile: Profile; onSaved: () => voi
   };
   return (
     <form onSubmit={save} className="max-w-lg space-y-4">
-      <div><label className="label">Email</label><p className="font-bold">{profile.email}</p></div>
+      <div><p className="label">Email</p><p className="font-bold">{profile.email}</p></div>
       <div><label className="label" htmlFor="d-name">Name</label><input id="d-name" name="full_name" defaultValue={profile.full_name ?? ""} maxLength={100} className="input" /></div>
       <div><label className="label" htmlFor="d-phone">Cellphone</label><input id="d-phone" name="phone" type="tel" defaultValue={profile.phone ?? ""} pattern="\+?[0-9 \(\)\-]{9,20}" className="input" /></div>
       {msg && <p className="text-sm font-bold">{msg}</p>}
@@ -233,7 +233,7 @@ function PrivacyTab({ profile, orders, enquiries, requests, onSent }: { profile:
           <option value="access">Tell me what information you hold</option>
         </select>
         <textarea name="details" rows={3} maxLength={2000} className="input" placeholder="Anything we should know (optional)" />
-        <p className="text-xs text-ink/60">We keep order records for 5 years because tax law requires it, even if you ask us to delete your account. See the <Link to="/privacy" className="underline">Privacy Policy</Link>.</p>
+        <p className="text-xs text-ink/70">We keep order records for 5 years because tax law requires it, even if you ask us to delete your account. See the <Link to="/privacy" className="underline">Privacy Policy</Link>.</p>
         {msg && <p className="text-sm font-bold">{msg}</p>}
         <button className="btn-primary">Send request</button>
       </form>

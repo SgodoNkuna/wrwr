@@ -47,16 +47,16 @@ export default function EnquiriesAdmin() {
           ))}
         </div>
       } />
-      <p className="mb-4 text-xs text-farm-950/50">Enquiries are deleted automatically after 24 months (Privacy Policy). Delete sooner if a customer asks.</p>
+      <p className="mb-4 text-xs text-ink/70">Enquiries are deleted automatically after 24 months (Privacy Policy). Delete sooner if a customer asks.</p>
       <ErrorBox error={error} />
-      {items.length === 0 && <p className="card p-6 text-sm text-farm-950/60">No {filter === "all" ? "" : filter} enquiries.</p>}
+      {items.length === 0 && <p className="card p-6 text-sm text-ink/70">No {filter === "all" ? "" : filter} enquiries.</p>}
       <div className="space-y-3">
         {items.map((e) => (
           <div key={e.id} className="card p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="font-semibold">{e.name} <span className="font-normal text-farm-950/60">· {e.products?.name ?? "General enquiry"}{e.quantity ? ` · Qty: ${e.quantity}` : ""}</span></p>
-                <p className="text-xs text-farm-950/50">{new Date(e.created_at).toLocaleString("en-ZA")} · {e.phone}{e.email ? ` · ${e.email}` : ""}{e.consent_at ? ` · POPIA consent ${new Date(e.consent_at).toLocaleDateString("en-ZA")}` : ""}</p>
+                <p className="font-semibold">{e.name} <span className="font-normal text-ink/70">· {e.products?.name ?? "General enquiry"}{e.quantity ? ` · Qty: ${e.quantity}` : ""}</span></p>
+                <p className="text-xs text-ink/70">{new Date(e.created_at).toLocaleString("en-ZA")} · {e.phone}{e.email ? ` · ${e.email}` : ""}{e.consent_at ? ` · POPIA consent ${new Date(e.consent_at).toLocaleDateString("en-ZA")}` : ""}</p>
               </div>
               <select value={e.status} onChange={(ev) => update(e.id, { status: ev.target.value as Enquiry["status"] })} className="input w-auto py-1">
                 {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}

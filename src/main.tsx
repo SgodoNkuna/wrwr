@@ -16,6 +16,9 @@ const OrdersAdmin = lazy(() => import("./admin/OrdersAdmin"));
 const CustomersAdmin = lazy(() => import("./admin/CustomersAdmin"));
 const PaymentsAdmin = lazy(() => import("./admin/PaymentsAdmin"));
 const PrivacyAdmin = lazy(() => import("./admin/PrivacyAdmin"));
+const AnimalsAdmin = lazy(() => import("./admin/AnimalsAdmin"));
+const ApprovalsAdmin = lazy(() => import("./admin/ApprovalsAdmin"));
+const SecurityAdmin = lazy(() => import("./admin/SecurityAdmin"));
 import SiteLayout from "./components/SiteLayout";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -41,7 +44,7 @@ createRoot(document.getElementById("root")!).render(
       <SettingsProvider>
         <AuthProvider>
         <CartProvider>
-          <Suspense fallback={<p className="p-8 text-ink/60">Loading…</p>}>
+          <Suspense fallback={<p className="p-8 text-ink/70">Loading…</p>}>
           <Routes>
             <Route element={<SiteLayout />}>
               <Route index element={<Home />} />
@@ -70,6 +73,9 @@ createRoot(document.getElementById("root")!).render(
               <Route path="customers" element={<CustomersAdmin />} />
               <Route path="payments" element={<PaymentsAdmin />} />
               <Route path="privacy" element={<PrivacyAdmin />} />
+              <Route path="animals" element={<AnimalsAdmin />} />
+              <Route path="approvals" element={<ApprovalsAdmin />} />
+              <Route path="security" element={<SecurityAdmin />} />
               <Route path="products" element={<ProductsAdmin />} />
               <Route path="categories" element={<CategoriesAdmin />} />
               <Route path="services" element={<ServicesAdmin />} />

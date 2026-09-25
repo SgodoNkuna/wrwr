@@ -26,7 +26,7 @@ export default function Products() {
           {[{ slug: "all", name: "Everything" }, ...categories].map((c) => (
             <button key={c.slug} role="tab" aria-selected={active === c.slug}
               onClick={() => setParams(c.slug === "all" ? {} : { category: c.slug })}
-              className={`font-display text-xl uppercase ${active === c.slug ? "text-sun-500" : "text-ink/60 hover:text-ink"}`}>
+              className={`font-display text-xl uppercase ${active === c.slug ? "text-sun-500" : "text-ink/70 hover:text-ink"}`}>
               {c.name}
             </button>
           ))}
@@ -35,8 +35,8 @@ export default function Products() {
       </div>
 
       {error && <p className="mt-8 border-2 border-sun-500 bg-white p-4 text-sun-600">{error}</p>}
-      {loading ? <p className="mt-10 text-ink/60">Loading…</p> : list.length === 0 ? (
-        <p className="mt-10 font-hand text-3xl text-ink/60">Nothing matches that. Try another word?</p>
+      {loading ? <p className="mt-10 text-ink/70">Loading…</p> : list.length === 0 ? (
+        <p className="mt-10 font-hand text-3xl text-ink/70">Nothing matches that. Try another word?</p>
       ) : (
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((p) => <ProductCard key={p.id} product={p} />)}

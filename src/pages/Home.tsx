@@ -13,7 +13,7 @@ const listJoin = (xs: string[]) => (xs.length < 2 ? xs.join("") : `${xs.slice(0,
 
 export default function Home() {
   const { business, home } = useSettings();
-  const { categories, products, loading } = useCatalogue();
+  const { categories, products, loading, animalCounts } = useCatalogue();
   const flagship = products.find((p) => p.slug === "broiler-chicks");
   const orderable = products.filter((p) => p.orderable && p.show_price && p.in_stock);
   const enquire = products.filter((p) => !(p.orderable && p.show_price));
@@ -28,7 +28,7 @@ export default function Home() {
           <p className="mt-5 max-w-lg text-lg leading-relaxed text-ink/80">{home.hero_subtitle}</p>
           <div className="mt-8 flex flex-wrap items-center gap-5">
             <Link to="/products" className="btn-primary px-6 py-3 text-base">See what's for sale</Link>
-            <a href={whatsappLink(business)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 font-bold text-[#1f8f4e] underline decoration-2 underline-offset-4">
+            <a href={whatsappLink(business)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 font-bold text-[#177a41] underline decoration-2 underline-offset-4">
               <WhatsAppIcon className="h-5 w-5" /> {business.phone}
             </a>
           </div>
@@ -49,7 +49,7 @@ export default function Home() {
       </section>
 
       <section className="container-x">
-        {loading ? <p className="text-ink/60">Loading prices…</p> : <PriceBoard categories={categories} products={products} />}
+        {loading ? <p className="text-ink/70">Loading prices…</p> : <PriceBoard categories={categories} products={products} animalCounts={animalCounts} />}
       </section>
 
       <section className="container-x mt-16 grid gap-10 md:grid-cols-[1fr_1.1fr]">
@@ -64,7 +64,7 @@ export default function Home() {
                 {products.filter((p) => p.category_id === c.id).map((p, j, arr) => (
                   <span key={p.id}>
                     <Link to={`/products/${p.slug}`} className="underline decoration-kraft underline-offset-4 hover:decoration-sun-500">{p.name.replace(/ \(.+\)$/, "")}</Link>
-                    {j < arr.length - 1 && <span className="text-ink/40"> / </span>}
+                    {j < arr.length - 1 && <span className="text-ink/65"> / </span>}
                   </span>
                 ))}
               </p>

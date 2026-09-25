@@ -44,7 +44,7 @@ export default function SiteLayout() {
             <NavLink to={isStaff ? "/admin" : "/account"} className={link}>{session ? (isStaff ? "Admin" : "My account") : "Sign in"}</NavLink>
           </nav>
           <div className="flex items-center gap-3">
-            <a href={whatsappLink(business)} target="_blank" rel="noopener noreferrer" className="hidden items-center gap-1.5 text-sm font-bold text-[#1f8f4e] lg:flex">
+            <a href={whatsappLink(business)} target="_blank" rel="noopener noreferrer" className="hidden items-center gap-1.5 text-sm font-bold text-[#177a41] lg:flex">
               <WhatsAppIcon className="h-4 w-4" /> {business.phone}
             </a>
             <Link to="/basket" className="relative flex items-center gap-1.5 rounded-tag border-2 border-ink px-3 py-1.5 text-sm font-bold hover:bg-ink hover:text-paper" aria-label={`Basket, ${count} items`}>
@@ -90,7 +90,7 @@ export default function SiteLayout() {
               <Link to="/paia" className="hover:text-paper">PAIA</Link> ·{" "}
               <button onClick={reopen} className="hover:text-paper">Cookie settings</button>
             </p>
-            <p className="mt-2 text-xs text-paper/50">
+            <p className="mt-2 text-xs text-paper/70">
               © {new Date().getFullYear()} {business.legal_name || business.name}
               {business.registration_number && ` · Reg. no. ${business.registration_number}`} ·{" "}
               <Link to="/admin" className="hover:text-paper">Staff</Link>

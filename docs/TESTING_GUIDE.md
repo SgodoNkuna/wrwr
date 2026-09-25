@@ -11,6 +11,7 @@ Passwords are shared privately and are **not stored in this repo**, because the 
 | Admin | `admin.test@example.com` | Everything: products, enquiries, settings, users & roles, audit log, deletes |
 | Editor | `editor.test@example.com` | Products, categories, services, enquiries. No settings, users, deletes or audit log |
 | No access | `noaccess.test@example.com` | Can sign in to the admin, but sees "Awaiting access" and nothing else |
+| Admin two | `admin2.test@example.com` | A second admin, so you can test two-person approval |
 | Customer | `customer.test@example.com` | A shopper account at **`/account`**. It has one past order (TA-TEST-00012). |
 
 Staff log in at **`/admin`**. Customers log in at **`/account`** (the "Sign in" link in the header).
@@ -22,6 +23,7 @@ Staff log in at **`/admin`**. Customers log in at **`/account`** (the "Sign in" 
 - **Enquiries:** 5 samples (3 new, 1 contacted, 1 closed).
 - **Orders:** 12 test orders over the last 14 days, in every status (references `TA-TEST-00001` to `TA-TEST-00012`, all flagged TEST).
 - **Stock:** broiler chicks 40 boxes, Brahma chickens 6 (shows as low stock). Other products aren't stock-tracked.
+- **Livestock listings:** 6 test animals, including a Bonsmara heifer, a reserved Brahman cow, Boer goats and a group of 10 weaners.
 - **Online ordering** is on for broiler chicks, Brahmas, turkeys, ducks, green peppers and green beans. Livestock stays enquiry-only.
 - **Payments:** EFT and pay-on-collection are on. Online payment (PayFast) shows **"Coming soon"** until merchant keys are added. Bank details are empty, so customers are told they'll get them on WhatsApp.
 - **Spare images** for testing uploads are in [`docs/test-assets/`](test-assets/). Download them to your phone or PC first.
@@ -70,6 +72,24 @@ Staff log in at **`/admin`**. Customers log in at **`/account`** (the "Sign in" 
 8. **Dashboard:** the tiles (orders to handle, awaiting payment, paid this month), the 14-day chart (hover a bar), and "Needs attention" (open orders, low stock, privacy requests).
 9. **Privacy requests:** set the test deletion request to *done* with a note.
 
+### Two-person approval (both admins)
+1. As **admin.test**, open an order, then **Request deletion…** and give a reason. Try approving it yourself in **Approvals**: it's refused.
+2. Sign out, then sign in as **admin2.test** → **Approvals** → **Approve**. The order is gone and both names are in the history.
+3. Same flow for **Users & roles** (tick "Admin" on someone), **Request refund…** on a paid order, and **Customers → Anonymise…**.
+
+### Two-step sign-in
+1. **Admin → My security → Set up two-step sign-in.** Scan the QR code with Google Authenticator and enter the code.
+2. Sign out and back in: you're asked for a 6-digit code.
+3. As admin, switch on "Require two-step sign-in for every staff member". **editor.test** now has to set it up before seeing anything.
+
+### Live alerts
+Keep the admin open in one tab and place an order in another. Within a second or two a toast appears with a beep, and the tab title shows (1). Click **Turn on desktop alerts** in the sidebar to get notifications while the tab is in the background.
+
+### Delivery, livestock, exports
+- Place an order with **Please arrange delivery**. In the admin order, set a **Delivery charge**; the total updates. Use **WhatsApp: delivery quote**.
+- **Livestock listings:** add an animal with a photo, then check **Cattle** shows it under "Available now". Mark it **sold** and it disappears.
+- **Orders → Export CSV** and **Audit log** (filter by area or person, then **Export CSV**).
+
 ## Switching on online payments (when the client confirms)
 1. The client opens a **PayFast** merchant account in the business's name and gets verified.
 2. In **Supabase → Edge Functions → Secrets**, add `PAYFAST_MERCHANT_ID`, `PAYFAST_MERCHANT_KEY`, `PAYFAST_PASSPHRASE`, `SITE_URL=https://<live domain>` and `PAYFAST_SANDBOX=true`.
@@ -77,6 +97,7 @@ Staff log in at **`/admin`**. Customers log in at **`/account`** (the "Sign in" 
 4. Set `PAYFAST_SANDBOX=false`, then switch **"Offer Pay online"** on in Admin → Payments.
 
 ## Before launch
+See **[GO_LIVE.md](GO_LIVE.md)** for the full checklist. In short:
 1. In **Admin → Site settings**, fill in the real registered name, CIPC number, POPIA Information Officer and email. The legal pages use these values.
 2. Create the real owner account, make it admin, then run `cleanup_test_data.sql` and delete the five test accounts (admin, editor, no-access, customer).
 3. Fill in the real bank details in **Admin → Payments** and set real stock levels.

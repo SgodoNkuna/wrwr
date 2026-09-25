@@ -40,7 +40,7 @@ export default function OrderPage() {
     setOrder(found ?? null);
   };
 
-  if (order === undefined) return <div className="container-x py-16 text-ink/60">Loading your order…</div>;
+  if (order === undefined) return <div className="container-x py-16 text-ink/70">Loading your order…</div>;
   if (order === null) return (
     <div className="container-x max-w-lg py-16">
       <h1 className="text-5xl text-farm-900">Order {reference}</h1>
@@ -73,7 +73,7 @@ export function OrderDetails({ order, orderId, paymentFlag }: { order: TrackedOr
       <div className="mt-8 grid gap-10 lg:grid-cols-[1.3fr_1fr]">
         <div className="space-y-6">
           <OrderMeta {...order} />
-          <div className="border-2 border-ink bg-white p-5"><ItemsTable items={order.items} total={order.total_cents} /></div>
+          <div className="border-2 border-ink bg-white p-5"><ItemsTable items={order.items} total={order.total_cents} delivery={order.delivery_cents ?? 0} /></div>
         </div>
 
         <aside className="space-y-4 self-start">
@@ -111,7 +111,7 @@ export function OrderDetails({ order, orderId, paymentFlag }: { order: TrackedOr
             </div>
           )}
           <a href={wa} target="_blank" rel="noopener noreferrer" className="btn-whatsapp w-full"><WhatsAppIcon className="h-4 w-4" /> WhatsApp us about this order</a>
-          <p className="text-sm text-ink/60">Keep your order number. You can check it any time on <Link to="/track" className="font-bold underline">Track order</Link>.</p>
+          <p className="text-sm text-ink/70">Keep your order number. You can check it any time on <Link to="/track" className="font-bold underline">Track order</Link>.</p>
         </aside>
       </div>
     </div>

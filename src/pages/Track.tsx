@@ -34,7 +34,7 @@ export default function Track() {
         {error && <p className="text-sm font-bold text-sun-600" role="alert">{error}</p>}
         <button disabled={busy} className="btn-primary w-full">{busy ? "Looking…" : "Show my order"}</button>
       </form>
-      <p className="mt-4 text-sm text-ink/60">Have an account? <Link to="/account" className="font-bold underline">Sign in</Link> to see all your orders.</p>
+      <p className="mt-4 text-sm text-ink/70">Have an account? <Link to="/account" className="font-bold underline">Sign in</Link> to see all your orders.</p>
     </div>
   );
 }

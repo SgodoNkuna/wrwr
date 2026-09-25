@@ -18,7 +18,7 @@ export default function Contact() {
           <dl className="divide-y-2 divide-ink/10 border-y-2 border-ink">
             <div className="py-4">
               <dt className="label">WhatsApp (quickest)</dt>
-              <dd><a href={whatsappLink(business)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 font-display text-3xl text-[#1f8f4e]"><WhatsAppIcon /> {business.phone}</a></dd>
+              <dd><a href={whatsappLink(business)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 font-display text-3xl text-[#177a41]"><WhatsAppIcon /> {business.phone}</a></dd>
             </div>
             <div className="py-4">
               <dt className="label">Call</dt>

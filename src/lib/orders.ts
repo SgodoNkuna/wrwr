@@ -4,7 +4,7 @@ import type { PaymentMethod, TrackedOrder } from "./types";
 
 export interface CheckoutDetails {
   name: string; phone: string; email: string; fulfilment: "collect" | "delivery"; delivery_address: string; notes: string;
-  payment_method: PaymentMethod; consent: boolean; accept_terms: boolean;
+  payment_method: PaymentMethod; consent: boolean; accept_terms: boolean; captcha_token?: string;
 }
 export interface PlacedOrder { order_id: string; reference: string; total_cents: number; payment_method: PaymentMethod }
 
@@ -56,6 +56,6 @@ export function recallOrder(reference: string): { orderId: string; phone: string
 }
 
 const friendlyError = (msg: string) =>
-  /not available|between 1 and|Only \d+ left|empty|Consent|accept the Terms|payment method|Too many|lot of orders|Online payment/i.test(msg)
+  /not available|between 1 and|Only \d+ left|empty|Consent|accept the Terms|payment method|Too many|lot of orders|Online payment|human/i.test(msg)
     ? msg
     : "Please check your details (a valid phone number is required) and try again.";

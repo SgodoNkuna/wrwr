@@ -48,7 +48,7 @@ export default function OrdersChart({ days }: { days: DayCount[] }) {
               {(i % 2 === 0 || i === days.length - 1) && (
                 <text x={x + bw / 2} y={H - 8} textAnchor="middle" fontSize="10" fill="#6b6f67">{d.label}</text>
               )}
-              <rect x={PAD.left + i * band} y={PAD.top} width={band} height={plotH + 4} fill="transparent" tabIndex={0}
+              <rect x={PAD.left + i * band} y={PAD.top} width={band} height={plotH + 4} fill="transparent" tabIndex={0} role="img"
                 aria-label={`${d.label}: ${d.count} orders, ${fmtR(d.revenue)}`}
                 onPointerEnter={() => setHover(i)} onPointerLeave={() => setHover(null)} onFocus={() => setHover(i)} onBlur={() => setHover(null)} />
             </g>
@@ -59,13 +59,13 @@ export default function OrdersChart({ days }: { days: DayCount[] }) {
         <div className="pointer-events-none absolute top-0 rounded-md border border-ink/10 bg-white px-3 py-2 text-xs shadow-md"
           style={{ left: `clamp(0px, calc(${((PAD.left + hover * band + band / 2) / W) * 100}% - 60px), calc(100% - 130px))` }}>
           <p className="text-base font-bold text-ink">{active.count} {active.count === 1 ? "order" : "orders"}</p>
-          <p className="text-ink/60">{active.label} · {fmtR(active.revenue)}</p>
+          <p className="text-ink/70">{active.label} · {fmtR(active.revenue)}</p>
         </div>
       )}
       <details className="mt-2 text-xs">
-        <summary className="cursor-pointer text-ink/60">Show as table</summary>
+        <summary className="cursor-pointer text-ink/70">Show as table</summary>
         <table className="mt-2 w-full" style={{ fontVariantNumeric: "tabular-nums" }}>
-          <thead><tr className="text-left text-ink/60"><th className="py-1">Day</th><th className="py-1 text-right">Orders</th><th className="py-1 text-right">Value</th></tr></thead>
+          <thead><tr className="text-left text-ink/70"><th className="py-1">Day</th><th className="py-1 text-right">Orders</th><th className="py-1 text-right">Value</th></tr></thead>
           <tbody>{days.map((d) => <tr key={d.date} className="border-t border-ink/10"><td className="py-1">{d.label}</td><td className="py-1 text-right">{d.count}</td><td className="py-1 text-right">{fmtR(d.revenue)}</td></tr>)}</tbody>
         </table>
       </details>

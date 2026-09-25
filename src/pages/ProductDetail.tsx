@@ -4,6 +4,7 @@ import { Minus, Phone, Plus } from "lucide-react";
 import EnquiryForm from "../components/EnquiryForm";
 import { WhatsAppIcon } from "../components/Icons";
 import ProductImage from "../components/ProductImage";
+import AnimalList from "../components/AnimalList";
 import { formatRand, telLink, whatsappLink } from "../lib/format";
 import { useSettings } from "../lib/settings";
 import { useCart } from "../lib/cart";
@@ -43,7 +44,7 @@ export default function ProductDetail() {
     return () => el.remove();
   }, [product]);
 
-  if (product === undefined) return <div className="container-x py-20 text-ink/60">Loading…</div>;
+  if (product === undefined) return <div className="container-x py-20 text-ink/70">Loading…</div>;
   if (!product) return (
     <div className="container-x py-20">
       <h1 className="text-5xl">Not on the farm</h1>
@@ -75,7 +76,7 @@ export default function ProductDetail() {
           <div className="mt-5 flex flex-wrap items-end gap-4">
             <div className={`ticket px-4 py-2 ${priced ? "bg-yolk" : "bg-kraft-light"}`}>
               <p className={priced ? "font-display text-4xl leading-none" : "font-hand text-3xl leading-none"}>{priced ? formatRand(product.price_cents!) : "Ask for a price"}</p>
-              {product.unit && <p className="text-xs font-bold uppercase tracking-wide text-ink/60">{product.unit}</p>}
+              {product.unit && <p className="text-xs font-bold uppercase tracking-wide text-ink/80">{product.unit}</p>}
             </div>
             {product.stock_qty != null && product.in_stock && product.stock_qty <= 10 && (
               <p className="font-hand text-2xl text-sun-600">only {product.stock_qty} left</p>
@@ -110,7 +111,7 @@ export default function ProductDetail() {
           )}
 
           <div className="mt-6 flex flex-wrap gap-5 text-sm font-bold">
-            <a href={whatsappLink(business, product.name)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#1f8f4e] underline decoration-2 underline-offset-4">
+            <a href={whatsappLink(business, product.name)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#177a41] underline decoration-2 underline-offset-4">
               <WhatsAppIcon className="h-4 w-4" /> Ask about {product.name.replace(/ \(.+\)$/, "").toLowerCase()} on WhatsApp
             </a>
             <a href={telLink(business.phone)} className="flex items-center gap-1.5 underline decoration-2 underline-offset-4"><Phone className="h-4 w-4" /> {business.phone}</a>
@@ -122,6 +123,7 @@ export default function ProductDetail() {
           </details>
         </div>
       </div>
+      <AnimalList productId={product.id} productName={product.name} />
     </div>
   );
 }

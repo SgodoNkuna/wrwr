@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { supabase } from "./supabase";
-import type { BusinessSettings, HomeSettings, PaymentSettings } from "./types";
+import type { BusinessSettings, HomeSettings, PaymentSettings, SecuritySettings } from "./types";
 
 export const DEFAULT_BUSINESS: BusinessSettings = {
   name: "Tshehla AgriHub",
@@ -34,15 +34,20 @@ export const DEFAULT_PAYMENTS: PaymentSettings = {
   branch_code: "",
   eft_note: "Use your order number as the payment reference and send proof of payment on WhatsApp.",
   delivery_note: "Collection is at the farm. Delivery can be arranged; we will confirm the cost on WhatsApp.",
+  hold_hours: 48,
+  cash_hold_hours: 72,
 };
 
-interface Ctx { business: BusinessSettings; home: HomeSettings; payments: PaymentSettings; reload: () => Promise<void> }
-const SettingsCtx = createContext<Ctx>({ business: DEFAULT_BUSINESS, home: DEFAULT_HOME, payments: DEFAULT_PAYMENTS, reload: async () => {} });
+export const DEFAULT_SECURITY: SecuritySettings = { require_staff_mfa: false, two_person_approval: true, captcha_site_key: "" };
+
+interface Ctx { business: BusinessSettings; home: HomeSettings; payments: PaymentSettings; security: SecuritySettings; reload: () => Promise<void> }
+const SettingsCtx = createContext<Ctx>({ business: DEFAULT_BUSINESS, home: DEFAULT_HOME, payments: DEFAULT_PAYMENTS, security: DEFAULT_SECURITY, reload: async () => {} });
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [business, setBusiness] = useState(DEFAULT_BUSINESS);
   const [home, setHome] = useState(DEFAULT_HOME);
   const [payments, setPayments] = useState(DEFAULT_PAYMENTS);
+  const [security, setSecurity] = useState(DEFAULT_SECURITY);
 
   const reload = async () => {
     const { data } = await supabase.from("site_settings").select("key, value");
@@ -50,11 +55,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       if (row.key === "business") setBusiness({ ...DEFAULT_BUSINESS, ...(row.value as object) });
       if (row.key === "home") setHome({ ...DEFAULT_HOME, ...(row.value as object) });
       if (row.key === "payments") setPayments({ ...DEFAULT_PAYMENTS, ...(row.value as object) });
+      if (row.key === "security") setSecurity({ ...DEFAULT_SECURITY, ...(row.value as object) });
     }
   };
 
   useEffect(() => { void reload(); }, []);
-  return <SettingsCtx.Provider value={{ business, home, payments, reload }}>{children}</SettingsCtx.Provider>;
+  return <SettingsCtx.Provider value={{ business, home, payments, security, reload }}>{children}</SettingsCtx.Provider>;
 }
 
 export const useSettings = () => useContext(SettingsCtx);

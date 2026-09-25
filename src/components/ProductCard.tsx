@@ -25,12 +25,12 @@ export default function ProductCard({ product }: { product: Product }) {
             <p className={priced ? "font-display text-2xl leading-none" : "font-hand text-xl leading-none"}>
               {priced ? formatRand(product.price_cents!) : "Ask for a price"}
             </p>
-            {product.unit && <p className="text-[11px] font-bold uppercase tracking-wide text-ink/60">{product.unit}</p>}
+            {product.unit && <p className="text-[11px] font-bold uppercase tracking-wide text-ink/80">{product.unit}</p>}
           </div>
           {product.orderable && priced && product.in_stock ? (
             <Link to={`/products/${product.slug}`} className="text-sm font-bold text-farm-700 underline decoration-2 underline-offset-4">Order →</Link>
           ) : (
-            <a href={whatsappLink(business, product.name)} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-[#1f8f4e] underline decoration-2 underline-offset-4">
+            <a href={whatsappLink(business, product.name)} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-[#177a41] underline decoration-2 underline-offset-4">
               WhatsApp us →
             </a>
           )}

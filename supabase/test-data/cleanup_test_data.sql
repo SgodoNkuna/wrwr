@@ -9,3 +9,7 @@ update public.site_settings set value = value || '{"announcement":"Broiler chick
 delete from public.orders where is_test;
 update public.products set stock_qty = null;
 -- delete from auth.users where email = 'customer.test@example.com';
+delete from public.animals where tag like 'TEST-%';
+delete from public.pending_approvals where requested_by_email like '%.test@example.com';
+-- Test admins: remove from the SQL editor (it bypasses the two-person rule for owners):
+-- delete from auth.users where email in ('admin2.test@example.com');

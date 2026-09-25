@@ -11,7 +11,7 @@ function LegalShell({ title, intro, children }: { title: string; intro: string; 
   return (
     <div className="container-x max-w-3xl py-12">
       <h1 className="text-5xl text-farm-900 sm:text-6xl">{title}</h1>
-      <p className="mt-2 text-sm text-farm-950/60">Last updated: {UPDATED}</p>
+      <p className="mt-2 text-sm text-ink/70">Last updated: {UPDATED}</p>
       <div className="legal mt-8 space-y-4 leading-relaxed text-farm-950/85 [&_h2]:mt-8 [&_h2]:text-3xl [&_h2]:text-farm-900 [&_li]:ml-5 [&_li]:list-disc [&_a]:font-semibold [&_a]:text-farm-700 [&_a]:underline">
         <p>{intro}</p>
         {children}
@@ -72,6 +72,8 @@ export function PrivacyPolicy() {
         <li><b>Vercel</b>: website hosting.</li>
         <li><b>PayFast</b>: only if you choose to pay online. PayFast receives your name, email and the order amount, and handles your card details itself.</li>
         <li><b>WhatsApp (Meta)</b>: only when you choose to contact us on WhatsApp.</li>
+        <li><b>Resend</b>: sends order confirmations and updates to your email address, if you gave one.</li>
+        <li><b>Cloudflare Turnstile</b>: if switched on, checks at checkout that you're a person and not a bot. It doesn't track you across other websites.</li>
         <li><b>Google Maps</b>: only if you accept cookies or click "Load map".</li>
       </ul>
       <p><b>Cross-border transfer (s72):</b> some of these providers store data outside South Africa. We only use providers that are bound by agreements or laws that give protection substantially similar to POPIA. By submitting an enquiry, you agree to this transfer.</p>
@@ -86,7 +88,7 @@ export function PrivacyPolicy() {
       </ul>
 
       <h2>6. How we protect it</h2>
-      <p>Access is limited to authorised staff with individual accounts and role-based permissions. Every staff change is logged. Data is encrypted in transit (HTTPS), and the database enforces row-level security. If a security breach affects your information, we will notify you and the Information Regulator as required by POPIA s22.</p>
+      <p>Access is limited to authorised staff with individual accounts, role-based permissions and optional two-step sign-in. High-risk actions (such as deleting records) need a second person to approve them. Every staff change is logged. Data is encrypted in transit (HTTPS), and the database enforces row-level security. If a security breach affects your information, we will notify you and the Information Regulator as required by POPIA s22.</p>
 
       <h2>7. Your rights</h2>
       <p>Under POPIA you may:</p>
@@ -169,6 +171,7 @@ export function CookiePolicy() {
       <h2>Third-party (only with your consent)</h2>
       <ul>
         <li><b>Google Maps</b> on the Contact page: Google may set cookies when the map loads. It loads only if you click "Accept all" or "Load map".</li>
+        <li><b>Cloudflare Turnstile</b> at checkout (if switched on): a security check that stops bots from placing fake orders. It is strictly necessary for the checkout to work safely.</li>
       </ul>
       <h2>What we don't use</h2>
       <p>No analytics, advertising, social-media tracking pixels or cross-site marketing cookies.</p>

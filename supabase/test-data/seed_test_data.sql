@@ -91,3 +91,18 @@ where t.order_id = o.id and o.is_test;
 -- Link the last one to the test customer account, if it exists.
 update public.orders set customer_id = (select id from auth.users where email = 'customer.test@example.com')
 where reference = 'TA-TEST-00012';
+
+-- ── Livestock listings (individual animals / groups) ─────────────────────
+delete from public.animals where tag like 'TEST-%';
+insert into public.animals (product_id, tag, title, breed, sex, age_months, weight_kg, quantity, price_cents, show_price, status, image_url, notes, sort_order)
+select p.id, v.tag, v.title, v.breed, v.sex, v.age, v.kg, v.qty, v.price, v.show, v.status, v.img, v.notes, v.ord
+from (values
+  ('cattle', 'TEST-C014', 'Bonsmara heifer',  'Bonsmara',  'female', 18, 320.0, 1, 1250000, true,  'available', '/images/test/cattle.jpg', 'TEST listing. Calm, dewormed.', 1),
+  ('cattle', 'TEST-C021', 'Nguni bull',       'Nguni',     'male',   30, 480.0, 1, null,    false, 'available', '/images/test/cattle.jpg', 'TEST listing. Ask for price.', 2),
+  ('cattle', 'TEST-C009', 'Brahman cow',      'Brahman',   'female', 48, 510.0, 1, 1450000, true,  'reserved',  '/images/test/cattle.jpg', 'TEST listing.', 3),
+  ('goats',  'TEST-G003', 'Boer goat ewes',   'Boer',      'female', 10,  38.0, 4,  180000, true,  'available', '/images/test/goats.jpg',  'TEST listing. Price per goat.', 1),
+  ('goats',  'TEST-G007', 'Boer buck',        'Boer',      'male',   24,  75.0, 1,  350000, true,  'sold',      '/images/test/goats.jpg',  'TEST listing.', 2),
+  ('pigs',   'TEST-P101', 'Large White weaners', 'Large White', 'mixed', 2, 12.0, 10, 90000, true, 'available', '/images/test/pigs.jpg',   'TEST listing. Price per weaner.', 1)
+) as v(slug, tag, title, breed, sex, age, kg, qty, price, show, status, img, notes, ord)
+join public.products p on p.slug = v.slug;
+-- A second test admin (admin2.test@example.com) exists so two-person approval can be tested.

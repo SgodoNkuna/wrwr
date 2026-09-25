@@ -26,9 +26,12 @@ Sources: [The Purple Gradient Problem (DEV)](https://dev.to/james_anderson_h/the
 | Fake testimonials and stats ("10k+ happy customers") | No | Kept that way. Nothing is invented. Add real reviews only when the client has them. |
 | Fade-in-on-scroll everything | No | Kept that way. Motion is limited to small hover responses. |
 
+## Accessibility
+Every colour pair is checked against WCAG 2 AA (4.5:1 for text). An automated axe scan of 23 pages runs in CI and fails the build on any serious or critical issue. The first version failed several checks (orange button text, muted grey text, WhatsApp green); the palette below is the corrected one.
+
 ## Palette
 Taken from the client's own material, not a framework default:
-forest green `#1f4d2b`, chick yolk `#f4a51c`, flyer ember `#e2561b`, cardboard kraft `#c49a6c`, paper `#f5efe2`, ink `#1d2a1f`.
+forest green `#1f4d2b`, chick yolk `#f4a51c`, ember `#c44612` (darkened from the flyer's `#e2561b` for contrast), WhatsApp green `#177a41`, cardboard kraft `#c49a6c` / `#745634`, paper `#f5efe2`, ink `#1d2a1f`.
 
 ## What would make it even less "template"
 Real photos of the farm, the animals and the people, taken on a phone in good light. Nothing
