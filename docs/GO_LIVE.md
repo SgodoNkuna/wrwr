@@ -4,8 +4,8 @@ Everything in the code is built and tested. What's left needs **your accounts, k
 which I couldn't create or change from the build environment. Each step says where to do it.
 
 ## 1. Supabase dashboard (project `supabase-citron-ocean`)
-- [ ] **Authentication → URL Configuration.** Set **Site URL** to the live domain (for now `https://tshehla-agrihub.vercel.app`) and add these **Redirect URLs**:
-      `https://tshehla-agrihub.vercel.app/account`, `https://tshehla-agrihub.vercel.app/account/reset`, `https://tshehla-agrihub.vercel.app/admin/reset`.
+- [ ] **Authentication → URL Configuration** ([direct link](https://supabase.com/dashboard/project/cydcyotvlgqlveoegcpt/auth/url-configuration)). Set **Site URL** to `https://www.tshehlaagrihub.co.za` and add these **Redirect URLs**:
+      `https://www.tshehlaagrihub.co.za/**` and `https://tshehla-agrihub.vercel.app/**`.
       *Until this is done, sign-up confirmation and password-reset emails point at `localhost` and won't work.*
 - [ ] **Authentication → Providers → Email.** Keep "Confirm email" on.
 - [ ] **Authentication → Passwords.** Turn on **Leaked password protection**.
@@ -50,12 +50,9 @@ Check it works: place a test order, then look at **Admin → Payments → Paymen
 
 ## 7. Domain and hosting
 - [x] Domain bought: **`tshehlaagrihub.co.za`** (GoDaddy, renews 25 Sep 2027).
-- [ ] **Vercel → project `tshehla-agrihub` → Settings → Domains:** add `tshehlaagrihub.co.za`, then add `www.tshehlaagrihub.co.za` and set it to redirect to the apex domain.
-- [ ] **GoDaddy → My Products → tshehlaagrihub.co.za → DNS → DNS Records.** Right now the domain points at GoDaddy's parking page (two `A @` records: `76.223.105.230` and `13.248.243.5`).
-      - Delete both parking `A @` records, then add **`A` · Name `@` · Value `76.76.21.21`**.
-      - Edit the `www` record to **`CNAME` · Name `www` · Value `cname.vercel-dns.com`**.
-      - If the Vercel Domains screen shows different values, use Vercel's. Wait for "Valid Configuration": HTTPS is issued automatically, usually within an hour.
-- [ ] After the domain works: set the Supabase **Site URL** and **Redirect URLs** (section 1) and the `SITE_URL` secret (sections 2 and 3) to `https://tshehlaagrihub.co.za`.
+- [x] **Connected (25 Sep 2026).** GoDaddy DNS: `A @ → 76.76.21.21` and `CNAME www → cname.vercel-dns.com`. In Vercel, **`www.tshehlaagrihub.co.za` is the main address** and `tshehlaagrihub.co.za` redirects to it (308). HTTPS is issued by Vercel.
+- [ ] Set the Supabase **Site URL** and **Redirect URLs** (section 1) and the `SITE_URL` secret (sections 2 and 3) to `https://www.tshehlaagrihub.co.za`.
+- [ ] Merge the PR (or redeploy production) so the live `sitemap.xml` and `robots.txt` use the new address.
 - [ ] Consider transferring the Vercel project out of the "African Women Investment Network" team into the client's own team (Project → Settings → Transfer).
 - [ ] **Option B, self-host with Docker:** on any Linux server with Docker, `cp .env.example .env`, fill it in, point DNS at the server, then run `docker compose up -d --build`. Caddy gets the HTTPS certificate automatically.
 - [x] `public/sitemap.xml` and `public/robots.txt` point at `tshehlaagrihub.co.za`.

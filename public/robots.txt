@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-Sitemap: https://tshehlaagrihub.co.za/sitemap.xml
+Sitemap: https://www.tshehlaagrihub.co.za/sitemap.xml
