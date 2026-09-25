@@ -1,32 +1,24 @@
 # Testing guide: Tshehla AgriHub
 
-Everything on the test site is **dummy data**. The orange banner at the top says so.
-When you're finished testing, run `supabase/test-data/cleanup_test_data.sql` (see "Before launch" below).
+**The site is live with real data** since 25 Sep 2026. The test orders, enquiries, livestock listings and test customer and staff accounts were removed. If you want to run the scripts below, use a fresh Supabase project with `supabase/test-data/seed_test_data.sql`, not the live one. Any order placed on the live site is a real order.
 
-## Test accounts
+## Accounts on the live site
 Passwords are shared privately and are **not stored in this repo**, because the repo is public.
 
-| Account | Email | What it can do |
+| Account | Email | Why it's still there |
 |---|---|---|
-| Admin | `admin.test@example.com` | Everything: products, enquiries, settings, users & roles, audit log, deletes |
-| Editor | `editor.test@example.com` | Products, categories, services, enquiries. No settings, users, deletes or audit log |
-| No access | `noaccess.test@example.com` | Can sign in to the admin, but sees "Awaiting access" and nothing else |
-| Admin two | `admin2.test@example.com` | A second admin, so you can test two-person approval |
-| Customer | `customer.test@example.com` | A shopper account at **`/account`**. It has one past order (TA-TEST-00012). |
+| Admin | `admin.test@example.com` | The only way into the admin until the owner has their own login |
+| Admin two | `admin2.test@example.com` | Approves giving the owner admin access (two-person rule) |
+
+Delete both once the owner's own admin account works (see GO_LIVE section 6).
 
 Staff log in at **`/admin`**. Customers log in at **`/account`** (the "Sign in" link in the header).
 
-## Data on the site
-- **Real, set by the client (25 Sep 2026):** prices for Brahma chickens R950, turkeys R900, geese R750, ducks R650 and goats R1 850. Stock is 50 of every product. Sheep and peacocks were added, and ostriches are available. The Capitec Business bank details are set.
-- **Still enquiry-only:** cattle, pigs, ostriches, sheep and peacocks show "Enquire for price".
-- **Pictures:** goats and sheep use real farm photos, and broiler chicks use the real Tau Poultry flyer. The rest still show a "TEST IMAGE" placeholder, and peacocks have no photo yet.
-- **Enquiries:** 5 samples (3 new, 1 contacted, 1 closed).
-- **Orders:** 12 test orders over the last 14 days, in every status (references `TA-TEST-00001` to `TA-TEST-00012`, all flagged TEST).
-- **Stock:** 50 of every product. Set one to 5 or less to see the low-stock label.
-- **Livestock listings:** 6 test animals, including a Bonsmara heifer, a reserved Brahman cow, Boer goats and a group of 10 weaners.
-- **Online ordering** is on for broiler chicks, Brahmas, turkeys, ducks, green peppers and green beans. Livestock stays enquiry-only.
-- **Payments:** EFT and pay-on-collection are on. Online payment (PayFast) shows **"Coming soon"** until merchant keys are added. The Capitec Business bank details show on the confirmation page of EFT orders.
-- **Spare images** for testing uploads are in [`docs/test-assets/`](test-assets/). Download them to your phone or PC first.
+## Live data
+- Prices set by the client: Brahma chickens R950, turkeys R900, geese R750, ducks R650, goats R1 850, broiler chicks R1 200 a box. Cattle, pigs, ostriches, sheep and peacocks are "Enquire for price".
+- Stock is 50 of every product. Every product has a real farm photo.
+- Payments: EFT (Capitec Business) and pay-on-collection. Online payment (PayFast) shows **"Coming soon"** until merchant keys are added.
+- **Spare images** for testing uploads are in [`docs/test-assets/`](test-assets/).
 
 ## Test script
 ### Public site (no login)

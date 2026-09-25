@@ -42,13 +42,14 @@ Check it works: place a test order, then look at **Admin → Payments → Paymen
 - [x] Business email: `Tshehla.agrihub@gmail.com`.
 - [ ] **Admin → Site settings:** the POPIA Information Officer (usually the owner).
 - [x] **Admin → Payments:** Capitec Business bank details are set. **Confirm the branch code `450105`** (Capitec Business's universal code) in the banking app. Change the hold times if 48 or 72 hours doesn't suit.
-- [ ] Real photos: goats and sheep are done. Still needed: cattle, pigs, poultry, peacocks, ostriches, peppers and beans. Uploads are resized, and location data is removed automatically.
+- [x] Real farm photos on every product (resized to WebP, no location data). Broiler chicks use the Tau Poultry flyer.
 - [x] Prices entered by the client. Stock is set to 50 of each product for now; update it in **Products & stock**.
-- [ ] Run `supabase/test-data/cleanup_test_data.sql` (it keeps the real prices and stock), then delete the test accounts in Supabase → Authentication → Users:
-      `admin.test`, `admin2.test`, `editor.test`, `noaccess.test`, `customer.test` (all `@example.com`).
+- [x] Test data removed on 25 Sep 2026: test orders, enquiries, livestock listings, the TEST banner and the `editor.test`, `noaccess.test` and `customer.test` accounts.
+- [ ] **Owner login:** once the Supabase Site URL is set (section 1), the owner signs up at `/admin` → **Request staff account**. `admin.test` gives them admin, `admin2.test` approves it, and then both test admins are deleted in Supabase → Authentication → Users. They're kept until then, because otherwise nobody could sign in to the admin.
 - [ ] Have an attorney review the Privacy Policy, Terms, and Orders & Returns policy.
 
 ## 7. Domain and hosting
+- [x] Daily keep-alive: a Vercel cron calls `/api/keepalive` at 04:17 UTC, so the free-plan Supabase project doesn't pause from inactivity. It is optional, but if you set `CRON_SECRET` in Vercel, the endpoint only answers Vercel's own cron calls.
 - [x] Domain bought: **`tshehlaagrihub.co.za`** (GoDaddy, renews 25 Sep 2027).
 - [x] **Connected (25 Sep 2026).** GoDaddy DNS: `A @ → 76.76.21.21` and `CNAME www → cname.vercel-dns.com`. In Vercel, **`www.tshehlaagrihub.co.za` is the main address** and `tshehlaagrihub.co.za` redirects to it (308). HTTPS is issued by Vercel.
 - [ ] Set the Supabase **Site URL** and **Redirect URLs** (section 1) and the `SITE_URL` secret (sections 2 and 3) to `https://www.tshehlaagrihub.co.za`.

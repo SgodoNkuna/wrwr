@@ -23,7 +23,7 @@ const cats = [
 ];
 const P = (id, cat, slug, name, unit, price, show, orderable, extra = {}) => ({
   id, category_id: cat, slug, name, summary: `${name} from Gunyula Farm.`, description: `${name} raised on the farm.`,
-  image_url: slug === "broiler-chicks" ? "/images/tau-poultry-broilers.jpg" : `/images/test/${slug}.jpg`, unit, price_cents: price, show_price: show,
+  image_url: slug === "broiler-chicks" ? "/images/tau-poultry-broilers.jpg" : null, unit, price_cents: price, show_price: show,
   in_stock: true, featured: false, published: true, highlights: [], sort_order: 1, orderable, stock_qty: null, max_per_order: 20,
   updated_at: iso(0), price_updated_at: iso(2), categories: { slug: cats.find((c) => c.id === cat).slug, name: cats.find((c) => c.id === cat).name }, ...extra,
 });
@@ -41,9 +41,9 @@ const products = [
   P("p11", "c3", "green-beans", "Green Beans", "Per crate / bag", 15000, true, true),
 ];
 const animals = [
-  { id: "a1", product_id: "p7", tag: "TEST-C014", title: "Bonsmara heifer", breed: "Bonsmara", sex: "female", age_months: 18, weight_kg: 320, quantity: 1, price_cents: 1250000, show_price: true, status: "available", image_url: "/images/test/cattle.jpg", notes: "TEST listing.", published: true, sort_order: 1 },
-  { id: "a2", product_id: "p7", tag: "TEST-C009", title: "Brahman cow", breed: "Brahman", sex: "female", age_months: 48, weight_kg: 510, quantity: 1, price_cents: 1450000, show_price: true, status: "reserved", image_url: "/images/test/cattle.jpg", notes: null, published: true, sort_order: 2 },
-  { id: "a3", product_id: "p9", tag: "TEST-P101", title: "Large White weaners", breed: "Large White", sex: "mixed", age_months: 2, weight_kg: 12, quantity: 10, price_cents: 90000, show_price: true, status: "available", image_url: "/images/test/pigs.jpg", notes: null, published: true, sort_order: 1 },
+  { id: "a1", product_id: "p7", tag: "TEST-C014", title: "Bonsmara heifer", breed: "Bonsmara", sex: "female", age_months: 18, weight_kg: 320, quantity: 1, price_cents: 1250000, show_price: true, status: "available", image_url: null, notes: "TEST listing.", published: true, sort_order: 1 },
+  { id: "a2", product_id: "p7", tag: "TEST-C009", title: "Brahman cow", breed: "Brahman", sex: "female", age_months: 48, weight_kg: 510, quantity: 1, price_cents: 1450000, show_price: true, status: "reserved", image_url: null, notes: null, published: true, sort_order: 2 },
+  { id: "a3", product_id: "p9", tag: "TEST-P101", title: "Large White weaners", breed: "Large White", sex: "mixed", age_months: 2, weight_kg: 12, quantity: 10, price_cents: 90000, show_price: true, status: "available", image_url: null, notes: null, published: true, sort_order: 1 },
 ].map((a) => ({ ...a, products: { name: products.find((p) => p.id === a.product_id).name, slug: products.find((p) => p.id === a.product_id).slug } }));
 const settings = [
   { key: "business", value: { name: "Tshehla AgriHub", tagline: "", phone: "068 828 9347", alt_phone: "083 798 6730", whatsapp: "27688289347", email: "info@tshehlaagrihub.co.za", address: "Gunyula Farm 38, Letsitele, Limpopo, 0885", hours: "Mon to Sat, 07:00 to 17:00", map_query: "Letsitele, Limpopo", legal_name: "Tshehla AgriHub", registration_number: "(to be confirmed)", information_officer: "(owner name to be confirmed)" } },

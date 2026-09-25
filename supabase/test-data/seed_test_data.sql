@@ -7,16 +7,16 @@ update public.products p set price_cents = v.price, show_price = v.show,
   image_url = coalesce(nullif(p.image_url, ''), v.img)
 from (values
   ('broiler-chicks',   120000, true,  null),
-  ('brahma-chickens',   25000, true,  '/images/test/brahma-chickens.jpg'),
-  ('turkeys',           45000, true,  '/images/test/turkeys.jpg'),
-  ('geese',             35000, false, '/images/test/geese.jpg'),
-  ('ducks',             15000, true,  '/images/test/ducks.jpg'),
-  ('ostriches',        450000, false, '/images/test/ostriches.jpg'),
-  ('cattle',          1200000, false, '/images/test/cattle.jpg'),
-  ('goats',            180000, true,  '/images/test/goats.jpg'),
-  ('pigs',             250000, false, '/images/test/pigs.jpg'),
-  ('green-peppers',     18000, true,  '/images/test/green-peppers.jpg'),
-  ('green-beans',       15000, true,  '/images/test/green-beans.jpg')
+  ('brahma-chickens',   25000, true,  null),
+  ('turkeys',           45000, true,  null),
+  ('geese',             35000, false, null),
+  ('ducks',             15000, true,  null),
+  ('ostriches',        450000, false, null),
+  ('cattle',          1200000, false, null),
+  ('goats',            180000, true,  null),
+  ('pigs',             250000, false, null),
+  ('green-peppers',     18000, true,  null),
+  ('green-beans',       15000, true,  null)
 ) as v(slug, price, show, img)
 where p.slug = v.slug;
 
@@ -98,12 +98,12 @@ delete from public.animals where tag like 'TEST-%';
 insert into public.animals (product_id, tag, title, breed, sex, age_months, weight_kg, quantity, price_cents, show_price, status, image_url, notes, sort_order)
 select p.id, v.tag, v.title, v.breed, v.sex, v.age, v.kg, v.qty, v.price, v.show, v.status, v.img, v.notes, v.ord
 from (values
-  ('cattle', 'TEST-C014', 'Bonsmara heifer',  'Bonsmara',  'female', 18, 320.0, 1, 1250000, true,  'available', '/images/test/cattle.jpg', 'TEST listing. Calm, dewormed.', 1),
-  ('cattle', 'TEST-C021', 'Nguni bull',       'Nguni',     'male',   30, 480.0, 1, null,    false, 'available', '/images/test/cattle.jpg', 'TEST listing. Ask for price.', 2),
-  ('cattle', 'TEST-C009', 'Brahman cow',      'Brahman',   'female', 48, 510.0, 1, 1450000, true,  'reserved',  '/images/test/cattle.jpg', 'TEST listing.', 3),
-  ('goats',  'TEST-G003', 'Boer goat ewes',   'Boer',      'female', 10,  38.0, 4,  180000, true,  'available', '/images/test/goats.jpg',  'TEST listing. Price per goat.', 1),
-  ('goats',  'TEST-G007', 'Boer buck',        'Boer',      'male',   24,  75.0, 1,  350000, true,  'sold',      '/images/test/goats.jpg',  'TEST listing.', 2),
-  ('pigs',   'TEST-P101', 'Large White weaners', 'Large White', 'mixed', 2, 12.0, 10, 90000, true, 'available', '/images/test/pigs.jpg',   'TEST listing. Price per weaner.', 1)
+  ('cattle', 'TEST-C014', 'Bonsmara heifer',  'Bonsmara',  'female', 18, 320.0, 1, 1250000, true,  'available', null, 'TEST listing. Calm, dewormed.', 1),
+  ('cattle', 'TEST-C021', 'Nguni bull',       'Nguni',     'male',   30, 480.0, 1, null,    false, 'available', null, 'TEST listing. Ask for price.', 2),
+  ('cattle', 'TEST-C009', 'Brahman cow',      'Brahman',   'female', 48, 510.0, 1, 1450000, true,  'reserved',  null, 'TEST listing.', 3),
+  ('goats',  'TEST-G003', 'Boer goat ewes',   'Boer',      'female', 10,  38.0, 4,  180000, true,  'available', null,  'TEST listing. Price per goat.', 1),
+  ('goats',  'TEST-G007', 'Boer buck',        'Boer',      'male',   24,  75.0, 1,  350000, true,  'sold',      null,  'TEST listing.', 2),
+  ('pigs',   'TEST-P101', 'Large White weaners', 'Large White', 'mixed', 2, 12.0, 10, 90000, true, 'available', null,   'TEST listing. Price per weaner.', 1)
 ) as v(slug, tag, title, breed, sex, age, kg, qty, price, show, status, img, notes, ord)
 join public.products p on p.slug = v.slug;
 -- A second test admin (admin2.test@example.com) exists so two-person approval can be tested.
