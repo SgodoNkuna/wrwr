@@ -1,0 +1,51 @@
+@import "@fontsource/anton/400.css";
+@import "@fontsource/atkinson-hyperlegible/400.css";
+@import "@fontsource/atkinson-hyperlegible/700.css";
+@import "@fontsource/caveat/600.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-paper font-sans text-ink antialiased;
+    /* Paper grain: an SVG noise tile, so the page doesn't look like a flat screen. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .2 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  h1, h2, h3 { @apply font-display font-normal uppercase leading-[0.95] tracking-normal; }
+  ::selection { @apply bg-yolk text-ink; }
+}
+
+@layer components {
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-tag px-5 py-2.5 text-sm font-bold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-yolk focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply btn bg-sun-500 text-white shadow-[3px_3px_0_0_#1d2a1f] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_0_#1d2a1f]; }
+  .btn-green { @apply btn bg-farm-900 text-paper hover:bg-farm-800; }
+  .btn-outline { @apply btn border-2 border-ink/80 bg-transparent text-ink hover:bg-ink hover:text-paper; }
+  .btn-whatsapp { @apply btn bg-[#177a41] text-white hover:bg-[#15703b]; }
+  .btn-danger { @apply btn bg-red-700 text-white hover:bg-red-800; }
+  .input { @apply w-full rounded-tag border border-ink/25 bg-white/80 px-3 py-2 text-sm outline-none focus:border-farm-700 focus:ring-2 focus:ring-farm-700/20; }
+  .label { @apply mb-1 block text-xs font-bold uppercase tracking-wider text-ink/70; }
+  .card { @apply rounded-md border border-ink/10 bg-white shadow-sm; }
+  .container-x { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
+
+  /* Farm-stall details */
+  .chalkboard {
+    @apply relative bg-chalk text-chalk-line;
+    background-image: radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px), radial-gradient(rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 7px 7px, 11px 11px;
+    background-position: 0 0, 3px 5px;
+    box-shadow: inset 0 0 0 10px #6b4f33, inset 0 0 0 12px #4b3722, 0 10px 25px -10px rgba(0,0,0,.5);
+  }
+  .tape::before {
+    content: ""; position: absolute; top: -14px; left: 50%; width: 120px; height: 30px;
+    transform: translateX(-50%) rotate(-4deg);
+    background: rgba(233, 216, 191, .85); box-shadow: 0 1px 2px rgba(0,0,0,.15); z-index: 2;
+  }
+  .stamp {
+    @apply inline-block border-[3px] px-3 py-1 font-display text-lg uppercase tracking-widest;
+    border-radius: 4px; mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60'%3E%3Cfilter id='r'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.6 1.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23r)'/%3E%3C/svg%3E");
+  }
+  .leaders { @apply flex items-baseline gap-2; }
+  .leaders > .dots { @apply min-w-4 flex-1 translate-y-[-4px] border-b-2 border-dotted border-chalk-line/40; }
+  .ticket { clip-path: polygon(0 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px)); }
+}

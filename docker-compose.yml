@@ -1,0 +1,31 @@
+# Self-hosting with automatic HTTPS (Caddy + Let's Encrypt).
+#   1. Point your domain's DNS A record at this server.
+#   2. cp .env.example .env and fill in VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, DOMAIN.
+#   3. docker compose up -d --build
+services:
+  web:
+    build:
+      context: .
+      args:
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+    environment:
+      SITE_URL: https://${DOMAIN:-localhost}
+    restart: unless-stopped
+    expose: ["8080"]
+
+  caddy:
+    image: caddy:2-alpine
+    depends_on: [web]
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
