@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-import { Menu, ShoppingBasket, X } from "lucide-react";
+import { ArrowUpRight, Menu, ShoppingBasket, X } from "lucide-react";
 import { telLink, whatsappLink } from "../lib/format";
 import { useSettings } from "../lib/settings";
 import { useCart } from "../lib/cart";
@@ -8,6 +8,9 @@ import { useConsent } from "../lib/consent";
 import { useAuth } from "../lib/auth";
 import { WhatsAppIcon } from "./Icons";
 import CookieBanner from "./CookieBanner";
+
+/** The studio that designed and built the site (footer credit). */
+const SITE_CREDIT = { name: "Lusandla Marketing", url: "https://sgodonkuna.github.io/" };
 
 const nav = [
   { to: "/products", label: "Products" },
@@ -90,11 +93,31 @@ export default function SiteLayout() {
               <Link to="/paia" className="hover:text-paper">PAIA</Link> ·{" "}
               <button onClick={reopen} className="hover:text-paper">Cookie settings</button>
             </p>
-            <p className="mt-2 text-xs text-paper/70">
+          </div>
+        </div>
+        <div className="border-t border-paper/10">
+          <div className="container-x flex flex-col items-center gap-4 pb-24 pt-5 text-xs text-paper/70 sm:flex-row sm:justify-between sm:pb-5">
+            <p className="text-center sm:text-left">
               © {new Date().getFullYear()} {business.legal_name || business.name}
               {business.registration_number && ` · Reg. no. ${business.registration_number}`} ·{" "}
               <Link to="/admin" className="hover:text-paper">Staff</Link>
             </p>
+            {/* Maker's mark: the studio signs its work, like a brand on a crate. */}
+            <a href={SITE_CREDIT.url} target="_blank" rel="noopener"
+              aria-label={`Designed and built by ${SITE_CREDIT.name} (opens in a new tab)`}
+              className="group flex items-center gap-3 md:pr-16">
+              <span aria-hidden="true"
+                className="grid h-9 w-9 shrink-0 -rotate-12 place-items-center rounded-full border-[1.5px] border-yolk/80 font-display text-[11px] tracking-wider text-yolk transition duration-300 group-hover:rotate-0 group-hover:bg-yolk group-hover:text-ink motion-reduce:transition-none">
+                LM
+              </span>
+              <span className="leading-none">
+                <span className="block text-[10px] font-bold uppercase tracking-[0.22em]">Designed &amp; built by</span>
+                <span className="mt-0.5 inline-flex items-center gap-1 font-hand text-xl text-paper underline-offset-4 decoration-yolk decoration-2 group-hover:underline">
+                  {SITE_CREDIT.name}
+                  <ArrowUpRight className="h-3.5 w-3.5 text-yolk transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transition-none" aria-hidden="true" />
+                </span>
+              </span>
+            </a>
           </div>
         </div>
       </footer>
