@@ -201,6 +201,7 @@ await d.click("button:has-text('Essential only')");
 check("hero title", (await d.locator("h1").first().innerText()).includes("GUNYULA"));
 check("price board shows animal count", (await d.locator(".chalkboard >> text=available").count()) > 0);
 check("sold-out struck through", (await d.locator(".chalkboard .line-through").count()) === 1);
+check("footer designer credit", (await d.locator("footer a[href='https://sgodonkuna.github.io/'][target=_blank]").count()) === 1);
 await shot(d, "home");
 
 await go(d, "/products/broiler-chicks");
